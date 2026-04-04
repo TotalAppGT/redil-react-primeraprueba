@@ -1,13 +1,31 @@
 import React, { useState } from 'react'
+import { supabase } from './supabaseClient'
 
 function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    alert(`Testing Login for: ${email}`)
-    // We will connect this to Supabase very soon!
+    setLoading(true)
+    setErrorMsg('')
+
+    // Attempt to log in with Supabase Authentication
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) {
+      setErrorMsg('Error: ' + error.message)
+    } else {
+      alert(`¡Éxito! Bienvenid@ ${data.user.email}. Tu conexión con Supabase es un éxito total.`)
+      // Here we would normally redirect to the Dashboard component
+    }
+    
+    setLoading(false)
   }
 
   return (
@@ -46,8 +64,11 @@ function App() {
               required 
             />
           </div>
-          <button type="submit" className="btn-login">
-            Ingresar al Sistema
+          
+          {errorMsg && <div className="login-err">{errorMsg}</div>}
+          
+          <button type="submit" className="btn-login" disabled={loading}>
+            {loading ? 'Validando en Supabase...' : 'Ingresar al Sistema'}
           </button>
         </form>
       </div>
