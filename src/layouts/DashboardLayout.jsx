@@ -12,7 +12,6 @@ export default function DashboardLayout() {
     navigate('/')
   }
 
-  // Cierra el sidebar al hacer click en un link en móviles
   const handleMobileNavClick = () => {
     if (window.innerWidth <= 768) {
       setSidebarOpen(false)
@@ -30,7 +29,7 @@ export default function DashboardLayout() {
             </div>
             <div>
               <div className="sb-title">Redil SaaS</div>
-              <div className="sb-sub">v6.0 Pro</div>
+              <div className="sb-sub">v6.1 Pro</div>
             </div>
           </div>
           <button className="sb-close" onClick={() => setSidebarOpen(false)}>
@@ -47,38 +46,65 @@ export default function DashboardLayout() {
         </div>
 
         <div className="sb-nav">
-          <div className="nl">Principal</div>
-          
+          <div className="nl" style={{ marginTop: '5px' }}>PRINCIPAL</div>
           <NavLink to="/dashboard" end onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-chart-pie"></i> Panel Central
+            <i className="fas fa-tachometer-alt"></i> Panel Central
           </NavLink>
           
-          <NavLink to="/dashboard/seguimientos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-hands-helping"></i> Seguimientos
-          </NavLink>
-
+          <div className="nl">REPORTES Y GESTIÓN</div>
           <NavLink to="/dashboard/asistencia" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-folder-open"></i> Asistencia / Grupos
+            <i className="fas fa-file-alt"></i> Reporte de Grupos
+          </NavLink>
+          <NavLink to="/dashboard/reporte-digital" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-mobile-alt"></i> Reporte Digital (Form)
+          </NavLink>
+          <NavLink to="/dashboard/generador" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-file-invoice"></i> Generador Reportes
           </NavLink>
 
+          <div className="nl">ADMINISTRACIÓN</div>
           <NavLink to="/dashboard/hermanos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-user-tie"></i> Hermanos Líderes
           </NavLink>
+          <NavLink to="/dashboard/carga-masiva" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-file-upload"></i> Carga Masiva
+          </NavLink>
+          <NavLink to="/dashboard/seguimientos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-hands-helping"></i> Seguimientos
+          </NavLink>
+          <NavLink to="/dashboard/privilegios" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-crown"></i> Privilegios
+          </NavLink>
+          <NavLink to="/dashboard/cronograma" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-calendar-alt"></i> Cronograma
+          </NavLink>
 
+          <div className="nl">FINANZAS Y RECURSOS</div>
           <NavLink to="/dashboard/finanzas" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-wallet"></i> Control Diezmos
           </NavLink>
-          
-          <div className="nl">Módulos Pro</div>
-          
-          <div className="ni"><i className="fas fa-file-pdf"></i> Reportes PDF</div>
-          
-          <div className="nl">Sistema</div>
-          
-          <NavLink to="/dashboard/usuarios" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-users-cog"></i> Control de Usuarios
+          <NavLink to="/dashboard/inventario" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-boxes"></i> Inventario
           </NavLink>
-          
+          <NavLink to="/dashboard/insumos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-spray-can"></i> Insumos
+          </NavLink>
+
+          <div className="nl">COMUNICACIONES</div>
+          <NavLink to="/dashboard/envio" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-paper-plane"></i> Centro de Envíos
+          </NavLink>
+          <NavLink to="/dashboard/contactos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-address-book"></i> Tabla de Contactos
+          </NavLink>
+
+          <div className="nl">SISTEMA</div>
+          <NavLink to="/dashboard/usuarios" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-user-cog"></i> Usuarios
+          </NavLink>
+          <NavLink to="/dashboard/bitacora" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-clipboard-list"></i> Bitácora Accesos
+          </NavLink>
           <NavLink to="/dashboard/configuracion" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-cog"></i> Configuración SaaS
           </NavLink>
@@ -95,9 +121,12 @@ export default function DashboardLayout() {
           <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <div className="tb-title">Sistema de Gestión Iglesia</div>
-          <div className="tb-right">
-            <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
+          <div className="tb-title">SaaS de Gestión Eclesiástica v6.1</div>
+          <div className="tb-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--tx3)', background: 'var(--bg3)', padding: '4px 10px', borderRadius: '15px' }}>
+               ID: #7425s-PRO
+            </span>
+            <button className="tb-btn"><i className="fas fa-bell"></i></button>
           </div>
         </div>
 
@@ -106,7 +135,6 @@ export default function DashboardLayout() {
         </div>
       </div>
 
-      {/* Burbuja Flotante de IA GLOBAL */}
       <ChatBubble />
     </div>
   )

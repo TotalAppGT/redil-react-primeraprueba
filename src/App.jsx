@@ -9,6 +9,16 @@ import Finanzas from './pages/Finanzas'
 import Hermanos from './pages/Hermanos'
 import Seguimientos from './pages/Seguimientos'
 import Usuarios from './pages/Usuarios'
+import Inventario from './pages/Inventario'
+import Insumos from './pages/Insumos'
+import Privilegios from './pages/Privilegios'
+import Generador from './pages/Generador'
+import Bitacora from './pages/Bitacora'
+import Envio from './pages/Envio'
+import Contactos from './pages/Contactos'
+import ReporteDigital from './pages/ReporteDigital'
+import Cronograma from './pages/Cronograma'
+import CargaMasiva from './pages/CargaMasiva'
 
 function App() {
   return (
@@ -25,6 +35,16 @@ function App() {
           <Route path="hermanos" element={<Hermanos />} />
           <Route path="seguimientos" element={<Seguimientos />} />
           <Route path="usuarios" element={<Usuarios />} />
+          <Route path="inventario" element={<Inventario />} />
+          <Route path="insumos" element={<Insumos />} />
+          <Route path="privilegios" element={<Privilegios />} />
+          <Route path="generador" element={<Generador />} />
+          <Route path="bitacora" element={<Bitacora />} />
+          <Route path="envio" element={<Envio />} />
+          <Route path="contactos" element={<Contactos />} />
+          <Route path="reporte-digital" element={<ReporteDigital />} />
+          <Route path="cronograma" element={<Cronograma />} />
+          <Route path="carga-masiva" element={<CargaMasiva />} />
         </Route>
       </Routes>
     </BrowserRouter>
