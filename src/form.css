@@ -1,0 +1,11 @@
+/* FORM ELEMENTS */
+.fg2{display:flex;flex-wrap:wrap;gap:20px}
+.fgg{display:flex;flex-direction:column;gap:6px}
+.fgg.half{width:calc(50% - 10px)}
+.fgg.full{width:100%}
+.fgg label{font-size:12px;font-weight:800;color:var(--pr)}
+.fc{padding:10px 13px;border:1px solid var(--brd);border-radius:var(--r2);font-size:13.5px;color:var(--tx);font-family:var(--fn);width:100%;transition:all .2s;background:#fff;}
+.fc:focus{border-color:var(--pr2);box-shadow:0 0 0 3px rgba(37,99,168,.14)}
+.drop-zone{border:2px dashed var(--brd);border-radius:var(--r);text-align:center;background:var(--bg3);cursor:pointer;transition:border .2s}
+.drop-zone:hover{border-color:var(--pr)}
+.sect-title{font-size:14px;font-weight:800;color:var(--tx2);border-bottom:1px solid var(--brd);padding-bottom:5px;margin-bottom:10px}

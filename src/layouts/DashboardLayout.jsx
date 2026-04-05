@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, NavLink } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 
 export default function DashboardLayout() {
@@ -39,18 +39,29 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        {/* NAVEGACIÓN */}
+        {/* NAVEGACIÓN con React Router */}
         <div className="sb-nav">
           <div className="nl">Principal</div>
-          <div className="ni active"><i className="fas fa-chart-pie"></i> Panel Central</div>
+          
+          <NavLink to="/dashboard" end className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-chart-pie"></i> Panel Central
+          </NavLink>
+          
           <div className="ni"><i className="fas fa-tasks"></i> Seguimientos</div>
           <div className="ni"><i className="fas fa-folder-open"></i> Asistencia</div>
+          
           <div className="nl">Módulos Pro</div>
+          
           <div className="ni"><i className="fas fa-file-pdf"></i> Reportes PDF</div>
-          <div className="ni"><i className="fas fa-robot"></i> Asistente de IA (Próximamente)</div>
+          <div className="ni"><i className="fas fa-robot"></i> Asistente de IA</div>
+          
           <div className="nl">Sistema</div>
+          
           <div className="ni"><i className="fas fa-users-cog"></i> Control de Usuarios</div>
-          <div className="ni"><i className="fas fa-cog"></i> Configuración SaaS</div>
+          
+          <NavLink to="/dashboard/configuracion" className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-cog"></i> Configuración SaaS
+          </NavLink>
         </div>
 
         <button className="btn-logout" onClick={handleLogout}>
@@ -71,8 +82,8 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        {/* Aquí adentro inyectaremos dinámicamente las pantallas (Dashboard, Inventario, etc) */}
         <div className="content">
+          {/* El Outlet inyecta Componentes que coincidan con la ruta hija */}
           <Outlet />
         </div>
       </div>

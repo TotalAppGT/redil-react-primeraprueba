@@ -3,18 +3,19 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import DashboardLayout from './layouts/DashboardLayout'
 import Home from './pages/Home'
+import Configuracion from './pages/Configuracion'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta Pública: Pantalla de Login */}
         <Route path="/" element={<Login />} />
 
-        {/* Rutas Privadas: Protegidas por el App Shell del Dashboard */}
+        {/* Layout Padre */}
         <Route path="/dashboard" element={<DashboardLayout />}>
-          {/* Outlet inyecta el Home por defecto cuando abrimos /dashboard */}
+          {/* Las ramas hijas que inyecta el <Outlet /> */}
           <Route index element={<Home />} />
+          <Route path="configuracion" element={<Configuracion />} />
         </Route>
       </Routes>
     </BrowserRouter>

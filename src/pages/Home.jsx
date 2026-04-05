@@ -1,6 +1,61 @@
 import React from 'react'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js'
+import { Bar } from 'react-chartjs-2'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 export default function Home() {
+  const chartData = {
+    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+    datasets: [
+      {
+        label: 'Ingresos Mensuales',
+        data: [12000, 19000, 15000, 22000, 18000, 24000, 26000],
+        backgroundColor: '#1a3a5c', // var(--pr)
+        borderRadius: 6,
+      },
+      {
+        label: 'Proyección Ideal',
+        data: [10000, 15000, 14000, 20000, 20000, 22000, 27000],
+        backgroundColor: '#e8a020', // var(--ac)
+        borderRadius: 6,
+      }
+    ]
+  }
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true } }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+      x: { grid: { display: false } }
+    }
+  }
+
   return (
     <div className="mod active">
       <div className="mod-hdr">
@@ -36,9 +91,9 @@ export default function Home() {
 
       <div className="dg">
         <div className="dc">
-          <div className="dct"><i className="fas fa-chart-line"></i> Crecimiento Financiero (Demo)</div>
-          <div className="chart-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aaab8', border: '2px dashed #d1dbe8', borderRadius: '8px' }}>
-            [ Aquí instalarás la Gráfica Profesional muy pronto ]
+          <div className="dct"><i className="fas fa-chart-line"></i> Crecimiento Financiero (Total)</div>
+          <div className="chart-area" style={{ position: 'relative', height: '240px' }}>
+            <Bar data={chartData} options={chartOptions} />
           </div>
         </div>
         <div className="dc">
