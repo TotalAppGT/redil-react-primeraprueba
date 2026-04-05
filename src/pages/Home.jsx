@@ -32,13 +32,13 @@ export default function Home() {
       {
         label: 'Ingresos Mensuales',
         data: [12000, 19000, 15000, 22000, 18000, 24000, 26000],
-        backgroundColor: '#1a3a5c', // var(--pr)
+        backgroundColor: '#1a3a5c',
         borderRadius: 6,
       },
       {
         label: 'Proyección Ideal',
         data: [10000, 15000, 14000, 20000, 20000, 22000, 27000],
-        backgroundColor: '#e8a020', // var(--ac)
+        backgroundColor: '#e8a020',
         borderRadius: 6,
       }
     ]
@@ -59,40 +59,65 @@ export default function Home() {
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-chart-pie"></i> Rendimiento General</h2>
+        <h2><i className="fas fa-chart-pie"></i> Dashboard General</h2>
         <div className="mod-acts">
-          <button className="btn btn-pr"><i className="fas fa-download"></i> Descargar Reporte PDF</button>
-          <button className="btn btn-ok"><i className="fas fa-plus"></i> Nuevo Registro</button>
+           <select className="fc" style={{ width: '150px', fontSize: '12px', height: '35px' }}>
+              <option>Este Mes</option>
+              <option>Esta Semana</option>
+              <option>Trimestre</option>
+           </select>
+          <button className="btn btn-pr btn-sm"><i className="fas fa-print"></i> Imprimir</button>
         </div>
       </div>
 
+      {/* KPIs Grid - 8 Tarjetas como el original */}
       <div className="sg">
-        <div className="sc b">
-          <div className="sc-ico"><i className="fas fa-users"></i></div>
-          <div className="sc-v">1,245</div>
-          <div className="sc-l">Miembros Activos</div>
-        </div>
-        <div className="sc g">
-          <div className="sc-ico"><i className="fas fa-check-circle"></i></div>
-          <div className="sc-v">89%</div>
-          <div className="sc-l">Asistencia Promedio</div>
+        <div className="sc">
+          <div className="sc-ico"><i className="fas fa-user-tie"></i></div>
+          <div className="sc-v">142</div>
+          <div className="sc-l">Líderes</div>
         </div>
         <div className="sc o">
-          <div className="sc-ico"><i className="fas fa-wallet"></i></div>
+          <div className="sc-ico"><i className="fas fa-home"></i></div>
+          <div className="sc-v">385</div>
+          <div className="sc-l">Grupos Realizados</div>
+        </div>
+        <div className="sc g">
+          <div className="sc-ico"><i className="fas fa-bullseye"></i></div>
+          <div className="sc-v">94%</div>
+          <div className="sc-l">Meta Grupos</div>
+        </div>
+        <div className="sc">
+          <div className="sc-ico"><i className="fas fa-users"></i></div>
+          <div className="sc-v">1,245</div>
+          <div className="sc-l">Asistencia Total</div>
+        </div>
+        <div className="sc p">
+          <div className="sc-ico"><i className="fas fa-hand-holding-usd"></i></div>
           <div className="sc-v">Q 15,200</div>
-          <div className="sc-l">Ingresos Mensuales</div>
+          <div className="sc-l">Ofrenda Total</div>
+        </div>
+        <div className="sc i">
+          <div className="sc-ico"><i className="fas fa-heart"></i></div>
+          <div className="sc-v">24</div>
+          <div className="sc-l">Convertidos</div>
+        </div>
+        <div className="sc t">
+          <div className="sc-ico"><i className="fas fa-pray"></i></div>
+          <div className="sc-v">12</div>
+          <div className="sc-l">Reconciliados</div>
         </div>
         <div className="sc r">
-          <div className="sc-ico"><i className="fas fa-user-minus"></i></div>
-          <div className="sc-v">12</div>
-          <div className="sc-l">Inactivos esta semana</div>
+          <div className="sc-ico"><i className="fas fa-exclamation-triangle"></i></div>
+          <div className="sc-v">5</div>
+          <div className="sc-l">Pendientes</div>
         </div>
       </div>
 
       <div className="dg">
         <div className="dc">
-          <div className="dct"><i className="fas fa-chart-line"></i> Crecimiento Financiero (Total)</div>
-          <div className="chart-area" style={{ position: 'relative', height: '240px' }}>
+          <div className="dct"><i className="fas fa-chart-line"></i> Asistencia & Ofrendas Mensuales</div>
+          <div className="chart-area" style={{ position: 'relative', height: '280px' }}>
             <Bar data={chartData} options={chartOptions} />
           </div>
         </div>

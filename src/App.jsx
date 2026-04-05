@@ -6,6 +6,9 @@ import Home from './pages/Home'
 import Configuracion from './pages/Configuracion'
 import Asistencia from './pages/Asistencia'
 import Finanzas from './pages/Finanzas'
+import Hermanos from './pages/Hermanos'
+import Seguimientos from './pages/Seguimientos'
+import Usuarios from './pages/Usuarios'
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
           <Route path="configuracion" element={<Configuracion />} />
           <Route path="asistencia" element={<Asistencia />} />
           <Route path="finanzas" element={<Finanzas />} />
+          <Route path="hermanos" element={<Hermanos />} />
+          <Route path="seguimientos" element={<Seguimientos />} />
+          <Route path="usuarios" element={<Usuarios />} />
         </Route>
       </Routes>
     </BrowserRouter>

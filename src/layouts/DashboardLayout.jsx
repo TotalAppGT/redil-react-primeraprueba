@@ -53,12 +53,20 @@ export default function DashboardLayout() {
             <i className="fas fa-chart-pie"></i> Panel Central
           </NavLink>
           
-          <NavLink to="/dashboard/finanzas" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-wallet"></i> Diezmos y Finanzas
+          <NavLink to="/dashboard/seguimientos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-hands-helping"></i> Seguimientos
           </NavLink>
 
           <NavLink to="/dashboard/asistencia" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-folder-open"></i> Asistencia
+            <i className="fas fa-folder-open"></i> Asistencia / Grupos
+          </NavLink>
+
+          <NavLink to="/dashboard/hermanos" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-user-tie"></i> Hermanos Líderes
+          </NavLink>
+
+          <NavLink to="/dashboard/finanzas" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-wallet"></i> Control Diezmos
           </NavLink>
           
           <div className="nl">Módulos Pro</div>
@@ -67,7 +75,9 @@ export default function DashboardLayout() {
           
           <div className="nl">Sistema</div>
           
-          <div className="ni"><i className="fas fa-users-cog"></i> Control de Usuarios</div>
+          <NavLink to="/dashboard/usuarios" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-users-cog"></i> Control de Usuarios
+          </NavLink>
           
           <NavLink to="/dashboard/configuracion" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-cog"></i> Configuración SaaS
@@ -85,7 +95,7 @@ export default function DashboardLayout() {
           <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <div className="tb-title">Bienvenido a tu nueva red</div>
+          <div className="tb-title">Sistema de Gestión Iglesia</div>
           <div className="tb-right">
             <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
           </div>
