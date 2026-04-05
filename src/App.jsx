@@ -20,14 +20,26 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
   static getDerivedStateFromError(error) { return { hasError: true }; }
-  componentDidCatch(error, errorInfo) { console.error("CRITICAL ERROR:", error, errorInfo); }
+  componentDidCatch(error, errorInfo) { 
+    this.setState({ errorInfo: error.toString() });
+    console.error("CRITICAL ERROR:", error, errorInfo); 
+  }
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8d7da', color: '#721c24', padding: '20px', textAlign: 'center' }}>
-          <h1>🛑 Error Crítico Detectado</h1>
-          <p>El sistema ha tenido un problema grave. Por favor, recarga la página o contacta al administrador.</p>
-          <button onClick={() => window.location.reload()} style={{ marginTop: '20px', padding: '10px 20px', background: '#721c24', color: '#fff', border: 'none', borderRadius: '5px' }}>Recargar Aplicación</button>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff5f5', color: '#c53030', padding: '30px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: '60px', marginBottom: '20px' }}>🛑</div>
+          <h1 style={{ fontWeight: '900', marginBottom: '10px' }}>Error Crítico Detectado</h1>
+          <p style={{ fontSize: '14px', maxWidth: '500px', margin: '0 auto 20px', color: '#7b2d2d' }}>
+            El sistema ha encontrado un problema técnico inesperado.
+          </p>
+          <div style={{ background: '#fff', padding: '15px', borderRadius: '10px', fontSize: '12px', fontFamily: 'monospace', border: '1.5px dashed #feb2b2', maxWidth: '80%', overflowX: 'auto', marginBottom: '20px' }}>
+             <strong>DETALLE TÉCNICO:</strong><br/>
+             {this.state.errorInfo || 'No se pudo capturar el mensaje de error.'}
+          </div>
+          <button onClick={() => window.location.reload()} style={{ padding: '12px 25px', background: '#c53030', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(197, 48, 48, 0.3)' }}>
+            RECARGAR APLICACIÓN
+          </button>
         </div>
       );
     }
