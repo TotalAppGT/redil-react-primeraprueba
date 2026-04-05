@@ -66,7 +66,7 @@ export default function Home() {
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-chart-pie"></i> {branding.nombre} — Dashboard</h2>
+        <h2><i className="fas fa-chart-pie"></i> {branding?.nombre || 'Dashboard'} — Resumen</h2>
         <div className="mod-acts">
            <select className="fc" style={{ width: '150px', fontSize: '12px', height: '35px' }}>
               <option>Este Mes</option>

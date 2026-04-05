@@ -27,11 +27,11 @@ export default function DashboardLayout() {
         <div className="sb-head">
           <div className="sb-brand">
             <div className="sb-logo-wrap" style={{ background: 'var(--ac)' }}>
-              {branding.logo ? <img src={branding.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="fas fa-church"></i>}
+              {branding?.logo ? <img src={branding.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="fas fa-church"></i>}
             </div>
             <div>
-              <div className="sb-title" style={{ fontSize: branding.nombre.length > 20 ? '11px' : '13px', fontWeight: '900' }}>{branding.nombre}</div>
-              <div className="sb-sub">{branding.sistemaActivo ? '✓ Sistema Activo' : '✕ Mantenimiento'}</div>
+              <div className="sb-title" style={{ fontSize: (branding?.nombre || '').length > 20 ? '11px' : '13px', fontWeight: '900' }}>{branding?.nombre || 'Redil SaaS'}</div>
+              <div className="sb-sub">{branding?.sistemaActivo ? '✓ Sistema Activo' : '✕ Mantenimiento'}</div>
             </div>
           </div>
           <button className="sb-close" onClick={() => setSidebarOpen(false)}>
@@ -125,7 +125,7 @@ export default function DashboardLayout() {
           </button>
           <div className="tb-title" style={{ fontWeight: '900', color: 'var(--pr)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '10px', background: 'var(--ac)', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>v6.2 PRO</span>
-            {branding.nombre}
+            {branding?.nombre || 'Cargando...'}
           </div>
           <div className="tb-right">
             <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
