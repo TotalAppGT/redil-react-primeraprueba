@@ -1,151 +1,165 @@
-import React, { useMemo } from 'react'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
+import React, { useState, useEffect } from 'react'
+import { Line, Bar } from 'react-chartjs-2'
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
   BarElement,
-  LineController,
-  BarController,
-  Title,
-  Tooltip,
-  Legend,
+  Title, 
+  Tooltip, 
+  Legend, 
   Filler,
-} from 'chart.js'
-import { Bar } from 'react-chartjs-2'
-import { useBranding } from '../context/BrandingContext'
-
-// Registrar ChartJS de forma segura
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
   LineController,
-  BarController,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
+  BarController
+} from 'chart.js'
+import { useBranding } from '../context/BrandingContext'
+import { supabaseService } from '../services/supabaseService'
+
+// Registrar controladores necesarios para gráficas mixtas
+ChartJS.register(
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  BarElement,
+  Title, 
+  Tooltip, 
+  Legend, 
+  Filler,
+  LineController,
+  BarController
 )
 
 export default function Home() {
   const { branding } = useBranding()
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    asistencia: 0,
+    ofrenda: 0,
+    pendientes: 0,
+    reportes: 0,
+    lideres: 0,
+    seguimientos: 0
+  })
 
-  // Sincronización Profesional de Data para Gráficas
-  const chartData = useMemo(() => ({
-    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+  const [recentData, setRecentData] = useState([])
+
+  useEffect(() => {
+    loadDashboardData()
+  }, [])
+
+  const loadDashboardData = async () => {
+    setLoading(true)
+    try {
+      // Cargar reportes del último mes aprox
+      const { data: rpts } = await supabaseService.getReportes()
+      const { data: lids } = await supabaseService.getHermanos()
+      
+      if (rpts) {
+        setRecentData(rpts.slice(0, 10))
+        const totals = rpts.reduce((acc, r) => {
+          acc.asistencia += parseInt(r.total_asist || 0)
+          acc.ofrenda += parseFloat(r.total_ofrenda || 0)
+          if (r.ofrenda_recibida === 'Pendiente') acc.pendientes++
+          acc.reportes++
+          return acc
+        }, { asistencia: 0, ofrenda: 0, pendientes: 0, reportes: 0 })
+        
+        setStats({
+          ...totals,
+          lideres: lids?.length || 0,
+          seguimientos: 15 // Mock for now
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const chartData = {
+    labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
     datasets: [
       {
-        label: 'Asistencia Total',
-        data: [1200, 1900, 1500, 2200, 1800, 2400, 2600],
-        backgroundColor: branding?.colorPr || '#1a3a5c',
-        borderRadius: 8,
-        barThickness: 25,
+        label: 'Asistencia GF',
+        data: [120, 190, 300, 500, 240, 380, 450],
+        fill: true,
+        backgroundColor: 'rgba(37, 99, 168, 0.1)',
+        borderColor: 'var(--pr)',
+        tension: 0.4,
+        pointRadius: 6,
+        pointBackgroundColor: 'var(--pr)'
       },
       {
-        label: 'Crecimiento Ofrendas (Q)',
-        data: [10000, 15000, 14000, 20000, 20000, 22000, 27000],
-        backgroundColor: branding?.colorAc || '#e8a020',
-        borderRadius: 8,
-        type: 'line',
-        borderColor: branding?.colorAc || '#e8a020',
-        borderWidth: 3,
+        label: 'Meta de Grupos',
+        data: [407, 407, 407, 407, 407, 407, 407],
+        borderColor: 'var(--ac)',
+        borderDash: [5, 5],
         fill: false,
-        pointRadius: 5,
-        tension: 0.4
+        pointRadius: 0,
+        type: 'line'
       }
-    ]
-  }), [branding]);
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    layout: { padding: { top: 10, bottom: 0 } },
-    plugins: {
-      legend: { 
-        position: 'bottom', 
-        labels: { boxWidth: 10, usePointStyle: true, font: { weight: '800', size: 11 } } 
-      }
-    },
-    scales: {
-      y: { 
-        beginAtZero: true, 
-        grid: { color: 'rgba(0,0,0,0.04)', borderDash: [5, 5] },
-        ticks: { font: { weight: '700' } }
-      },
-      x: { 
-        grid: { display: false },
-        ticks: { font: { weight: '700' } }
-      }
-    }
+    ],
   }
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-chart-line"></i> Dashboard: {branding?.nombre || 'General'} </h2>
+        <h2><i className="fas fa-chart-pie" style={{ color: 'var(--ac)' }}></i> Dashboard REDIL v6.2 PRO</h2>
         <div className="mod-acts">
-           <div className="btn btn-sm btn-ol" style={{ background: 'var(--bg3)', border: '1px solid var(--brd)' }}>
-              Periodo: Este Mes <i className="fas fa-chevron-down" style={{ fontSize: '10px' }}></i>
+           <button className="btn btn-pr" onClick={loadDashboardData}><i className="fas fa-sync"></i> ACTUALIZAR DATA</button>
+        </div>
+      </div>
+
+      <div className="sg">
+        <div className="sc g"><div className="sc-ico"><i className="fas fa-users"></i></div><div className="sc-v">{stats.asistencia}</div><div className="sc-l">ASISTENCIA TOTAL</div></div>
+        <div className="sc o"><div className="sc-ico"><i className="fas fa-coins"></i></div><div className="sc-v">Q {stats.ofrenda.toFixed(2)}</div><div className="sc-l">OFRENDA RECAUDADA</div></div>
+        <div className="sc r"><div className="sc-ico"><i className="fas fa-clock"></i></div><div className="sc-v">{stats.pendientes}</div><div className="sc-l">REPORTE PENDIENTES</div></div>
+        <div className="sc p"><div className="sc-ico"><i className="fas fa-id-card"></i></div><div className="sc-v">{stats.lideres}</div><div className="sc-l">HERMANOS LÍDERES</div></div>
+      </div>
+
+      <div className="dg">
+        <div className="dc">
+           <div className="dct"><i className="fas fa-chart-area"></i> TENDENCIA DE CRECIMIENTO SEMANAL</div>
+           <p style={{ fontSize: '11px', color: 'var(--tx2)', marginBottom: '15px' }}>Proyección basada en reportes de asistencia vs meta mensual de <b>{branding?.metaGrupos || '407'}</b> grupos.</p>
+           <div className="chart-area">
+             <Line data={chartData} options={{ maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }} />
            </div>
-           <button className="btn btn-pr btn-sm"><i className="fas fa-file-export"></i> Exportar Datos</button>
         </div>
-      </div>
-
-      <div className="sg" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <StatCard icon="user-tie" val="142" label="Líderes Activos" />
-        <StatCard icon="home" val="385" label="Grupos Reportados" color="o" />
-        <StatCard icon="bullseye" val="94%" label="Alcance de Meta" color="g" />
-        <StatCard icon="users" val="1,245" label="Asistencia Total" />
-        <StatCard icon="hand-holding-usd" val="Q 15,200" label="Diezmo / Ofrendas" color="p" />
-        <StatCard icon="heart" val="24" label="Nuevos Creyentes" color="i" />
-      </div>
-
-      <div className="dg" style={{ marginTop: '5px' }}>
+        
         <div className="dc">
-          <div className="dct" style={{ color: branding?.colorPr }}><i className="fas fa-chart-bar"></i> Rendimiento Semanal Mixto</div>
-          <div className="chart-area" style={{ position: 'relative', height: '300px' }}>
-            <Bar data={chartData} options={chartOptions} />
-          </div>
-        </div>
-        <div className="dc">
-          <div className="dct" style={{ color: branding?.colorPr }}><i className="fas fa-stream"></i> Bitácora en Vivo</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-             <ActivityItem title="Reporte Célula 102" desc="Líder: Juan Pérez" time="Hace 5m" />
-             <ActivityItem title="Aporte Registrado" desc="Materia: Alfolí Central" time="Hace 1hr" color="o" />
-             <ActivityItem title="Cronograma Actualizado" desc="Por: Admin Súper" time="Ayer" color="p" />
-             <ActivityItem title="Usuario Creado" desc="Líder: Sara G." time="Ayer" color="i" />
-             <ActivityItem title="Backup Finalizado" desc="Nube Cloud" time="2 días" color="g" />
-          </div>
+           <div className="dct"><i className="fas fa-history"></i> ACTIVIDAD RECIENTE</div>
+           <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
+              {recentData.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--tx3)' }}>Sin actividad hoy.</div>
+              ) : (
+                recentData.map((r, i) => (
+                  <div className="ri" key={r.id}>
+                    <div className="rdot" style={{ background: r.ofrenda_recibida === 'Pendiente' ? 'var(--err)' : 'var(--ok)' }}></div>
+                    <div className="rinfo">
+                      <div className="rn">{r.lider}</div>
+                      <div className="rm">{r.fecha} • Cód: {r.codigo}</div>
+                    </div>
+                    <div className="rv" style={{ color: r.total_asist > 10 ? 'var(--ok)' : 'var(--pr)' }}>{r.total_asist} Asist.</div>
+                  </div>
+                ))
+              )}
+           </div>
         </div>
       </div>
-    </div>
-  )
-}
 
-function StatCard({ icon, val, label, color = '' }) {
-  return (
-    <div className={`sc ${color}`}>
-       <div className="sc-ico"><i className={`fas fa-${icon}`}></i></div>
-       <div className="sc-v">{val}</div>
-       <div className="sc-l">{label}</div>
-    </div>
-  )
-}
-
-function ActivityItem({ title, desc, time, color = '' }) {
-  const { branding } = useBranding()
-  return (
-    <div className="ri">
-       <div className="rdot" style={{ background: color === 'o' ? 'var(--ac)' : color === 'p' ? 'var(--pur)' : color === 'i' ? 'var(--inf)' : color === 'g' ? 'var(--ok)' : 'var(--pr)' }}></div>
-       <div className="rinfo">
-         <div className="rn">{title}</div>
-         <div className="rm">{desc}</div>
-       </div>
-       <div className="rv" style={{ fontSize: '11px', color: 'var(--tx3)' }}>{time}</div>
+      <div className="card" style={{ marginTop: '13px', background: 'linear-gradient(135deg, var(--tl), var(--pr))', color: '#fff', border: 'none' }}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ fontSize: '42px', opacity: 0.8 }}>⚡</div>
+            <div>
+               <div style={{ fontSize: '16px', fontWeight: '900' }}>Resumen del Sistema SaaS</div>
+               <p style={{ fontSize: '12px', opacity: 0.8, marginTop: '2px' }}>El sistema REDIL v6.2 está operando al 100% bajo la identidad de <b>{branding?.nombre || 'REDIL'}</b></p>
+            </div>
+         </div>
+      </div>
     </div>
   )
 }

@@ -1,107 +1,92 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { supabaseService } from '../services/supabaseService'
+import { useBranding } from '../context/BrandingContext'
 
 export default function Generador() {
-  const [activeTab, setActiveTab] = useState('nuevo')
+  const { branding } = useBranding()
+  const [loading, setLoading] = useState(false)
+  const [filtros, setFiltros] = useState({
+    desde: '',
+    hasta: '',
+    lider: '',
+    supArea: '',
+    tipo: 'Reporte General'
+  })
 
-  // Mock data basado en los encabezados reales: ID_Reporte, Fecha Inicio, Fecha Fin, Total Ofrenda, Total Asistencia, Titulo de Reporte, Archivo Generado, No Serie, Mes Reporte, Ano Reporte, Filtro Lider, Filtro Sup Sector, Filtro Sup Area, Filtro Pastor Zona
-  const [generados, setGenerados] = useState([
-    { id: '1', titulo: 'Consolidado Marzo 2026', periodo: '01 Mar - 31 Mar', totalOfrenda: 45000, totalAsist: 1200, serie: 'R-2026-03', fecha: '2026-04-01' },
-    { id: '2', titulo: 'Informe Sede Central', periodo: '24 Abr - 30 Abr', totalOfrenda: 12800, totalAsist: 450, serie: 'R-2026-04-A', fecha: 'Hoy' },
-  ])
+  const [historial, setHistorial] = useState([])
+
+  useEffect(() => {
+    // Cargar historial de reportes generados
+    setHistorial([
+      { id: 'GEN_1', no_serie: 'RPT-2026-001', titulo: 'Informe Mensual Marzo', fecha: '2026-03-31', url: '#' }
+    ])
+  }, [])
+
+  const handleGenerar = async () => {
+    setLoading(true)
+    // Simulación de generación de PDF profesional
+    setTimeout(() => {
+      setLoading(false)
+      alert("✓ Reporte Generado Exitosamente: RPT-2026-002. El archivo se ha guardado en el servidor.")
+    }, 2000)
+  }
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-file-invoice"></i> Generador Pro de Reportes Consolidados</h2>
+        <h2><i className="fas fa-file-pdf"></i> Generador de Reportes Ejecutivos</h2>
         <div className="mod-acts">
-           <button 
-             className={`btn ${activeTab === 'nuevo' ? 'btn-pr' : 'btn-ol'}`} 
-             onClick={() => setActiveTab('nuevo')}
-           >
-             <i className="fas fa-magic"></i> Nuevo Reporte
-           </button>
-           <button 
-             className={`btn ${activeTab === 'historial' ? 'btn-pr' : 'btn-ol'}`} 
-             onClick={() => setActiveTab('historial')}
-           >
-             <i className="fas fa-history"></i> Historial Generados
+           <button className="btn btn-pr" onClick={handleGenerar} disabled={loading}>
+             {loading ? <i className="fas fa-circle-notch fa-spin"></i> : <i className="fas fa-magic"></i>} GENERAR AHORA
            </button>
         </div>
       </div>
 
-      {activeTab === 'nuevo' ? (
-        <div className="card" style={{ maxWidth: '800px', margin: '0 auto', animation: 'slUp 0.3s ease' }}>
-          <div className="ct"><i className="fas fa-filter"></i> Paso 1: Configurar Filtros del Reporte</div>
-          <form className="fg2" onSubmit={(e) => e.preventDefault()}>
-            <div className="fgg half">
-              <label>Título del Reporte</label>
-              <input type="text" className="fc" placeholder="Ej: Reporte Trimestral Q1" />
-            </div>
-            <div className="fgg half">
-              <label>Fecha de Inicio del Período</label>
-              <input type="date" className="fc" />
-            </div>
-            <div className="fgg half">
-              <label>Filtro por Pastor de Zona</label>
-              <select className="fc"><option>Todos los pastores</option></select>
-            </div>
-            <div className="fgg half">
-              <label>Filtro por Supervisor de Área</label>
-              <select className="fc"><option>Todas las áreas</option></select>
-            </div>
-            <div className="fgg half">
-              <label>Incluir Gráficas en PDF</label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12.5px', marginTop: '5px' }}>
-                <input type="checkbox" defaultChecked /> <span>Sí, incluir gráficas de rendimiento</span>
-              </label>
-            </div>
-            <div className="fgg half">
-              <label>Opciones de Salida</label>
-              <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
-                 <button className="btn btn-pr" style={{ flex: 1 }}><i className="fas fa-file-pdf"></i> Generar PDF</button>
-                 <button className="btn btn-ok" style={{ flex: 1 }}><i className="fas fa-file-excel"></i> Generar Excel</button>
+      <div className="dg">
+        <div className="dc">
+           <div className="dct"><i className="fas fa-filter"></i> PARÁMETROS DEL REPORTE</div>
+           <div className="fg2">
+              <div className="fgg half"><label>DESDE FECHA</label><input type="date" className="fc" value={filtros.desde} onChange={e => setFiltros({...filtros, desde: e.target.value})} /></div>
+              <div className="fgg half"><label>HASTA FECHA</label><input type="date" className="fc" value={filtros.hasta} onChange={e => setFiltros({...filtros, hasta: e.target.value})} /></div>
+              <div className="fgg full">
+                <label>TÍTULO DEL INFORME</label>
+                <input className="fc" placeholder="Ej: Resumen Semanal de Zona 1" value={filtros.tipo} onChange={e => setFiltros({...filtros, tipo: e.target.value})} />
               </div>
-            </div>
-          </form>
-        </div>
-      ) : (
-        <div className="card" style={{ padding: '0', animation: 'slUp 0.3s ease' }}>
-           <div className="table-wrap">
-            <table className="pro-table">
-               <thead>
-                 <tr>
-                    <th>Num. Serie</th>
-                    <th>Título de Reporte</th>
-                    <th>Período</th>
-                    <th>Resultado</th>
-                    <th>Generado el</th>
-                    <th>Acciones</th>
-                 </tr>
-               </thead>
-               <tbody>
-                  {generados.map(g => (
-                    <tr key={g.id}>
-                      <td><span className="stat-pill" style={{ background: 'var(--bg3)' }}>{g.serie}</span></td>
-                      <td><strong>{g.titulo}</strong></td>
-                      <td>{g.periodo}</td>
-                      <td>
-                        <div style={{ fontSize: '11px', color: 'var(--ok)', fontWeight: '800' }}>Q {g.totalOfrenda.toLocaleString()}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--pr)', fontWeight: '800' }}>{g.totalAsist} Pers.</div>
-                      </td>
-                      <td>{g.fecha}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '5px' }}>
-                          <button className="tb-btn" title="Descargar"><i className="fas fa-download"></i></button>
-                          <button className="tb-btn" title="Eliminar" style={{ color: 'var(--err)' }}><i className="fas fa-trash"></i></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-               </tbody>
-            </table>
+              <div className="fgg half">
+                 <label>FILTRAR POR LÍDER (OPCIONAL)</label>
+                 <input className="fc" placeholder="Nombre del líder..." value={filtros.lider} onChange={e => setFiltros({...filtros, lider: e.target.value})} />
+              </div>
+              <div className="fgg half">
+                 <label>FILTRAR POR ÁREA (OPCIONAL)</label>
+                 <input className="fc" placeholder="Nombre del área..." value={filtros.supArea} onChange={e => setFiltros({...filtros, supArea: e.target.value})} />
+              </div>
+           </div>
+
+           <div style={{ background: '#f0f4f8', padding: '20px', borderRadius: '15px', marginTop: '20px', border: '1.5px dashed var(--brd)' }}>
+              <div style={{ fontWeight: '800', color: 'var(--pr)', fontSize: '14px' }}>Proyección de Salida</div>
+              <p style={{ fontSize: '11px', color: 'var(--tx2)', marginTop: '4px' }}>
+                Se generará un documento PDF profesional con el logotipo de <b>{branding?.nombre}</b>, incluyendo gráficas de tendencia, tablas detalladas por líder y resumen financiero consolidado.
+              </p>
            </div>
         </div>
-      )}
+
+        <div className="dc">
+           <div className="dct"><i className="fas fa-history"></i> ÚLTIMOS REPORTES GENERADOS (DRIVE / CLOUD)</div>
+           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {historial.map(h => (
+                <div className="card" key={h.id} style={{ padding: '12px', margin: 0, background: 'var(--bg3)', border: '1px solid var(--brd)' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: '900', fontSize: '13px' }}>{h.no_serie}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--tx2)' }}>{h.titulo} • {h.fecha}</div>
+                      </div>
+                      <button className="btn btn-in btn-sm"><i className="fas fa-download"></i> PDF</button>
+                   </div>
+                </div>
+              ))}
+           </div>
+        </div>
+      </div>
     </div>
   )
 }

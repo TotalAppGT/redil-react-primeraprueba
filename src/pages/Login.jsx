@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { useBranding } from '../context/BrandingContext'
 
 export default function Login() {
+  const { branding } = useBranding()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -15,20 +17,38 @@ export default function Login() {
     setLoading(true)
     setErrorMsg('')
 
-    // Autonomous Auth via Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      })
 
-    if (error) {
-      setErrorMsg('Error: ' + error.message)
-    } else {
-      // Si el inicio es correcto, lo enviamos de forma profesional al Dashboard
-      navigate('/dashboard')
+      if (error) {
+        setErrorMsg('Error: ' + error.message)
+      } else {
+        navigate('/dashboard')
+      }
+    } catch (err) {
+      setErrorMsg('Error de conexión con el servidor REDIL.')
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
+  }
+
+  // Si el sistema está desactivado (solo el admin debería entrar, pero para simplificar lo bloqueamos)
+  if (branding?.sistemaActivo === false) {
+    return (
+      <div className="login-screen" style={{ display: 'flex' }}>
+        <div className="login-card" style={{ textAlign: 'center', borderColor: 'var(--err)', borderTop: '6px solid var(--err)' }}>
+          <div style={{ fontSize: '60px', marginBottom: '15px' }}>🔒</div>
+          <h2 style={{ fontFamily: 'var(--fn2)', fontWeight: '900', color: 'var(--pr)' }}>Sistema en Mantenimiento</h2>
+          <p style={{ color: 'var(--tx2)', fontSize: '14px', marginTop: '10px', lineHeight: '1.6' }}>
+            {branding?.msgMantenimiento || 'El sistema no se encuentra disponible temporalmente. Por favor, vuelva a intentarlo más tarde.'}
+          </p>
+          <button className="btn btn-pr" style={{ marginTop: '20px' }} onClick={() => window.location.reload()}>REINTENTAR</button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -40,11 +60,15 @@ export default function Login() {
       </div>
       <div className="login-card">
         <div className="login-logo">
-          <div className="logo-icon">
-            <i className="fas fa-church"></i>
+          <div className="logo-icon" style={{ background: 'var(--pr)' }}>
+            {branding?.logo ? (
+              <img src={branding.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ) : (
+              <i className="fas fa-church"></i>
+            )}
           </div>
-          <h1>Iglesia Restauración</h1>
-          <p>Sistema de Gestión v6.0 (SaaS Pro)</p>
+          <h1 style={{ color: 'var(--pr)' }}>{branding?.nombre || 'Iglesia Restauración'}</h1>
+          <p>Sistema de Gestión v6.2 (SaaS PRO)</p>
         </div>
         <form onSubmit={handleLogin}>
           <div className="fg">
@@ -70,10 +94,13 @@ export default function Login() {
           
           {errorMsg && <div className="login-err">{errorMsg}</div>}
           
-          <button type="submit" className="btn-login" disabled={loading}>
-            {loading ? 'Validando Privilegios...' : 'Ingresar al Sistema'}
+          <button type="submit" className="btn-login" style={{ background: 'var(--pr)' }} disabled={loading}>
+            {loading ? 'Validando Credenciales...' : 'INGRESAR AL SISTEMA'}
           </button>
         </form>
+        <p style={{ textAlign: 'center', fontSize: '10px', color: 'var(--tx3)', marginTop: '20px' }}>
+          &copy; {new Date().getFullYear()} REDIL SaaS v6.2 • Cloud Infrastructure
+        </p>
       </div>
     </div>
   )

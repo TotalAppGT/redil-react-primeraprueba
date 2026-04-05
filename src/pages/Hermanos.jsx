@@ -1,76 +1,106 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { supabaseService } from '../services/supabaseService'
+import { useBranding } from '../context/BrandingContext'
 
 export default function Hermanos() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const { branding } = useBranding()
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
-  // Datos profesionales para la transición
-  const [hermanos, setHermanos] = useState([
-    { id: '101', nombre: 'Juan Pérez', telefono: '5544-3322', area: 'Central', zona: 'Norte', sector: 'A', distrito: '1', privilegio: 'Pastor' },
-    { id: '102', nombre: 'María González', telefono: '4433-2211', area: 'Sede Sur', zona: 'Oeste', sector: 'B', distrito: '3', privilegio: 'Líder' },
-    { id: '103', nombre: 'Carlos Ruiz', telefono: '3322-1100', area: 'Enmanuel', zona: 'Sur', sector: 'C', distrito: '2', privilegio: 'Supervisor' },
-    { id: '104', nombre: 'Sara Martha', telefono: '2211-0099', area: 'Central', zona: 'Este', sector: 'A', distrito: '4', privilegio: 'Líder' },
-  ])
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      const { data: res, error } = await supabaseService.getHermanos()
+      if (res) setData(res)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filtered = data.filter(h => 
+    (h.nombre_l || '').toLowerCase().includes(search.toLowerCase()) ||
+    (h.codigo_l || '').includes(search) ||
+    (h.sup_sector_l || '').toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-user-tie"></i> Hermanos Líderes</h2>
+        <h2><i className="fas fa-user-tie"></i> Gestión de Hermanos Líderes</h2>
         <div className="mod-acts">
-           <button className="btn btn-ok btn-sm"><i className="fas fa-user-plus"></i> Registrar Nuevo Líder</button>
-           <button className="btn btn-pr btn-sm"><i className="fas fa-file-excel"></i> Exportar Líderes</button>
+           <button className="btn btn-ok" onClick={() => alert("Formulario para nuevo líder (Modal)")}><i className="fas fa-plus"></i> NUEVO LÍDER</button>
+           <button className="btn btn-pr" onClick={loadData}><i className="fas fa-sync"></i> REFRESCAR</button>
         </div>
       </div>
 
-      <div className="card" style={{ padding: '0' }}>
-        <div className="fr" style={{ padding: '15px', display: 'flex', gap: '12px', borderBottom: '1px solid var(--brd)', background: 'var(--bg3)' }}>
-           <div className="sb2" style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#fff', padding: '6px 14px', borderRadius: '10px', border: '1.5px solid var(--brd)' }}>
-              <i className="fas fa-search" style={{ color: 'var(--tx3)', marginRight: '10px' }}></i>
-              <input type="text" placeholder="Buscar líder por nombre, ID o teléfono..." className="fc" style={{ border: 'none', background: 'none' }} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-           </div>
-           <select className="fc" style={{ width: '180px' }}>
-              <option>Todos los Distritos</option>
-              <option>Distrito 1</option>
-              <option>Distrito 2</option>
-              <option>Distrito 3</option>
-           </select>
+      <div className="card" style={{ marginBottom: '15px' }}>
+        <div className="ct"><i className="fas fa-search"></i> BÚSQUEDA RÁPIDA</div>
+        <div className="fg">
+           <input 
+             type="text" 
+             className="fc" 
+             placeholder="Buscar por nombre, código o sector..." 
+             style={{ padding: '15px', fontSize: '15px', border: '1.5px solid var(--brd)' }}
+             value={search}
+             onChange={e => setSearch(e.target.value)}
+           />
         </div>
+      </div>
 
-        <div className="table-wrap">
-          <table className="pro-table">
-            <thead>
-              <tr style={{ background: 'var(--pr)', color: '#fff' }}>
-                <th style={{ color: '#fff' }}>Código ID</th>
-                <th style={{ color: '#fff' }}>Nombre del Líder</th>
-                <th style={{ color: '#fff' }}>Teléfono / Contacto</th>
-                <th style={{ color: '#fff' }}>Área / Zona</th>
-                <th style={{ color: '#fff' }}>Sector / Distrito</th>
-                <th style={{ color: '#fff' }}>Privilegio</th>
-                <th style={{ color: '#fff' }}>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {hermanos.map(h => (
+      <div className="sg">
+        <div className="sc g"><div className="sc-ico"><i className="fas fa-id-card"></i></div><div className="sc-v">{data.length}</div><div className="sc-l">LÍDERES REGISTRADOS</div></div>
+        <div className="sc i"><div className="sc-ico"><i className="fas fa-map-marker-alt"></i></div><div className="sc-v">{[...new Set(data.map(h => h.sup_sector_l))].length}</div><div className="sc-l">SECTORES ACTIVOS</div></div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="pro-table">
+          <thead>
+            <tr>
+              <th>Cód.</th>
+              <th>Nombre Completo del Líder</th>
+              <th>Sector / Zona / Área</th>
+              <th>Anfitrión / Lugar de Reunión</th>
+              <th>Estado</th>
+              <th style={{ textAlign: 'center' }}>Gestión</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-circle-notch fa-spin"></i> Cargando base de datos...</td></tr>
+            ) : filtered.length === 0 ? (
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-user-times" style={{ fontSize: '30px', color: 'var(--tx3)' }}></i><p>No se encontraron resultados para "{search}".</p></td></tr>
+            ) : (
+              filtered.map(h => (
                 <tr key={h.id}>
-                  <td><span className="stat-pill" style={{ background: 'var(--bg3)', color: 'var(--pr)', fontSize: '11px' }}>ID #{h.id}</span></td>
-                  <td><strong>{h.nombre}</strong></td>
-                  <td><i className="fas fa-phone-alt" style={{ color: 'var(--tx3)', fontSize: '11px', marginRight: '6px' }}></i> {h.telefono}</td>
+                  <td style={{ fontWeight: '900', color: 'var(--pr)' }}>{h.codigo_l}</td>
+                  <td><b>{h.nombre_l}</b><div style={{ fontSize: '10px', color: 'var(--tx2)' }}>Pastor de Zona: {h.pastor_zona || '—'}</div></td>
                   <td>
-                    <div style={{ fontWeight: '800', color: 'var(--pr)' }}>{h.area}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx2)' }}>Zona: {h.zona}</div>
+                    <span className="stat-pill" style={{ background: 'rgba(41,128,185,0.08)', color: 'var(--inf)', fontSize: '10px', fontWeight: '800' }}>{h.sup_sector_l}</span> • 
+                    <span className="stat-pill" style={{ background: 'rgba(14,102,85,0.08)', color: 'var(--tl)', fontSize: '10px', fontWeight: '800' }}>{h.sup_area_l}</span>
                   </td>
-                  <td>
-                    <div style={{ fontWeight: '800' }}>Sector: {h.sector}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx2)' }}>Distrito: {h.distrito}</div>
+                  <td style={{ fontSize: '12px' }}>
+                    <div style={{ fontWeight: '700' }}>{h.anfitrion}</div>
+                    <div style={{ color: 'var(--tx2)', fontSize: '11px' }}>{h.direccion}</div>
                   </td>
-                  <td>
-                    <span className={`stat-pill ${h.privilegio === 'Pastor' ? 'pill-ok' : 'pill-inf'}`} style={{ background: h.privilegio === 'Pastor' ? 'rgba(39,174,96,.1)' : 'rgba(41,128,185,.1)', color: h.privilegio === 'Pastor' ? 'var(--ok)' : 'var(--inf)' }}>{h.privilegio}</span>
+                  <td style={{ textAlign: 'center' }}><span className="stat-pill pill-ok">ACTIVO</span></td>
+                  <td style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                      <button className="tb-btn" title="Editar"><i className="fas fa-edit"></i></button>
+                      <button className="tb-btn" title="Privilegios"><i className="fas fa-crown"></i></button>
+                    </div>
                   </td>
-                  <td><button className="tb-btn"><i className="fas fa-edit"></i></button></td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   )

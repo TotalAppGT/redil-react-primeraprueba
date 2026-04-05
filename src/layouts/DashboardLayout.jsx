@@ -64,6 +64,9 @@ export default function DashboardLayout() {
           <NavLink to="/dashboard" end onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-tachometer-alt"></i> Panel General
           </NavLink>
+          <NavLink to="/dashboard/generador" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-file-pdf"></i> Generador Reportes
+          </NavLink>
           
           <div className="nl">GESTIÓN SEMANAL</div>
           <NavLink to="/dashboard/reporte-digital" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
