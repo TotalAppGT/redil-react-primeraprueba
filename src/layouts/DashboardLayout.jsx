@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Outlet, useNavigate, NavLink } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { useBranding } from '../context/BrandingContext'
 import ChatBubble from '../components/ChatBubble'
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const navigate = useNavigate()
+  const { branding } = useBranding()
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -19,17 +21,17 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ '--pr': branding.colorPr, '--ac': branding.colorAc }}>
       {/* SIDEBAR PROFESIONAL */}
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sb-head">
           <div className="sb-brand">
             <div className="sb-logo-wrap">
-              <i className="fas fa-church"></i>
+              {branding.logo ? <img src={branding.logo} alt="Logo" /> : <i className="fas fa-church"></i>}
             </div>
             <div>
-              <div className="sb-title">Redil SaaS</div>
-              <div className="sb-sub">v6.1 Pro</div>
+              <div className="sb-title">{branding.nombre}</div>
+              <div className="sb-sub">{branding.sistemaActivo ? 'Sistema Activo' : 'Mantenimiento'}</div>
             </div>
           </div>
           <button className="sb-close" onClick={() => setSidebarOpen(false)}>
@@ -41,7 +43,7 @@ export default function DashboardLayout() {
           <div className="sb-avatar"><i className="fas fa-user-circle"></i></div>
           <div className="sb-uinfo">
             <span>Administrador</span>
-            <small>Rol: Súper Admin</small>
+            <small>ID: #7425s-PRO</small>
           </div>
         </div>
 
@@ -121,12 +123,12 @@ export default function DashboardLayout() {
           <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <div className="tb-title">SaaS de Gestión Eclesiástica v6.1</div>
+          <div className="tb-title">{branding.nombre}</div>
           <div className="tb-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '11px', color: 'var(--tx3)', background: 'var(--bg3)', padding: '4px 10px', borderRadius: '15px' }}>
                ID: #7425s-PRO
             </span>
-            <button className="tb-btn"><i className="fas fa-bell"></i></button>
+            <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
           </div>
         </div>
 

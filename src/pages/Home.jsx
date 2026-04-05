@@ -12,6 +12,7 @@ import {
   Filler,
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
+import { useBranding } from '../context/BrandingContext'
 
 ChartJS.register(
   CategoryScale,
@@ -26,20 +27,26 @@ ChartJS.register(
 )
 
 export default function Home() {
+  const { branding } = useBranding()
+
   const chartData = {
     labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
     datasets: [
       {
-        label: 'Ingresos Mensuales',
-        data: [12000, 19000, 15000, 22000, 18000, 24000, 26000],
-        backgroundColor: '#1a3a5c',
+        label: 'Asistencia Total',
+        data: [1200, 1900, 1500, 2200, 1800, 2400, 2600],
+        backgroundColor: branding.colorPr || '#1a3a5c', // Color dinámico
         borderRadius: 6,
       },
       {
-        label: 'Proyección Ideal',
+        label: 'Ofrendas Recaudadas (Q)',
         data: [10000, 15000, 14000, 20000, 20000, 22000, 27000],
-        backgroundColor: '#e8a020',
+        backgroundColor: branding.colorAc || '#e8a020', // Color dinámico
         borderRadius: 6,
+        type: 'line',
+        borderColor: branding.colorAc || '#e8a020',
+        fill: false,
+        pointRadius: 4
       }
     ]
   }
@@ -48,7 +55,7 @@ export default function Home() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'bottom', labels: { usePointStyle: true } }
+      legend: { position: 'bottom', labels: { usePointStyle: true, font: { weight: '800' } } }
     },
     scales: {
       y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
@@ -59,7 +66,7 @@ export default function Home() {
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-chart-pie"></i> Dashboard General</h2>
+        <h2><i className="fas fa-chart-pie"></i> {branding.nombre} — Dashboard</h2>
         <div className="mod-acts">
            <select className="fc" style={{ width: '150px', fontSize: '12px', height: '35px' }}>
               <option>Este Mes</option>
@@ -70,7 +77,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* KPIs Grid - 8 Tarjetas como el original */}
       <div className="sg">
         <div className="sc">
           <div className="sc-ico"><i className="fas fa-user-tie"></i></div>
@@ -80,12 +86,12 @@ export default function Home() {
         <div className="sc o">
           <div className="sc-ico"><i className="fas fa-home"></i></div>
           <div className="sc-v">385</div>
-          <div className="sc-l">Grupos Realizados</div>
+          <div className="sc-l">Reportes del Mes</div>
         </div>
         <div className="sc g">
           <div className="sc-ico"><i className="fas fa-bullseye"></i></div>
           <div className="sc-v">94%</div>
-          <div className="sc-l">Meta Grupos</div>
+          <div className="sc-l">Cumplimiento Meta</div>
         </div>
         <div className="sc">
           <div className="sc-ico"><i className="fas fa-users"></i></div>
@@ -116,13 +122,13 @@ export default function Home() {
 
       <div className="dg">
         <div className="dc">
-          <div className="dct"><i className="fas fa-chart-line"></i> Asistencia & Ofrendas Mensuales</div>
+          <div className="dct" style={{ color: branding.colorPr }}><i className="fas fa-chart-line"></i> Asistencia & Ofrendas Mensuales</div>
           <div className="chart-area" style={{ position: 'relative', height: '280px' }}>
             <Bar data={chartData} options={chartOptions} />
           </div>
         </div>
         <div className="dc">
-          <div className="dct"><i className="fas fa-history"></i> Actividad Reciente</div>
+          <div className="dct" style={{ color: branding.colorPr }}><i className="fas fa-history"></i> Actividad Reciente</div>
           <div className="ri">
              <div className="rdot"></div>
              <div className="rinfo">
@@ -132,7 +138,7 @@ export default function Home() {
              <div className="rv">Hace 5m</div>
           </div>
           <div className="ri">
-             <div className="rdot" style={{ background: 'var(--ok)' }}></div>
+             <div className="rdot" style={{ background: branding.colorAc || 'var(--ok)' }}></div>
              <div className="rinfo">
                <div className="rn">Aporte Registrado</div>
                <div className="rm">Sede Norte</div>
@@ -140,7 +146,7 @@ export default function Home() {
              <div className="rv">Hace 1hr</div>
           </div>
           <div className="ri">
-             <div className="rdot" style={{ background: 'var(--inf)' }}></div>
+             <div className="rdot" style={{ background: branding.colorPr || 'var(--inf)' }}></div>
              <div className="rinfo">
                <div className="rn">Usuario Administrador Creado</div>
                <div className="rm">Por: Súper Admin</div>
