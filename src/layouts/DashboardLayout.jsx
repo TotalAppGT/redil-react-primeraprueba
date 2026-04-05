@@ -22,16 +22,16 @@ export default function DashboardLayout() {
 
   return (
     <div className="app-shell" style={{ '--pr': branding.colorPr, '--ac': branding.colorAc }}>
-      {/* SIDEBAR PROFESIONAL */}
+      {/* SIDEBAR V6.2 PRO */}
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sb-head">
           <div className="sb-brand">
-            <div className="sb-logo-wrap">
+            <div className="sb-logo-wrap" style={{ background: 'var(--ac)' }}>
               {branding.logo ? <img src={branding.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="fas fa-church"></i>}
             </div>
             <div>
-              <div className="sb-title" style={{ fontSize: branding.nombre.length > 20 ? '11px' : '13px' }}>{branding.nombre}</div>
-              <div className="sb-sub">{branding.sistemaActivo ? 'Sistema Activo' : 'Mantenimiento'}</div>
+              <div className="sb-title" style={{ fontSize: branding.nombre.length > 20 ? '11px' : '13px', fontWeight: '900' }}>{branding.nombre}</div>
+              <div className="sb-sub">{branding.sistemaActivo ? '✓ Sistema Activo' : '✕ Mantenimiento'}</div>
             </div>
           </div>
           <button className="sb-close" onClick={() => setSidebarOpen(false)}>
@@ -117,17 +117,17 @@ export default function DashboardLayout() {
         </button>
       </div>
 
-      {/* ÁREA PRINCIPAL */}
+      {/* ÁREA PRINCIPAL V6.2 */}
       <div className="main">
-        <div className="topbar">
+        <div className="topbar" style={{ borderBottom: `3px solid var(--ac)` }}>
           <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <div className="tb-title" style={{ color: branding.colorPr }}>{branding.nombre}</div>
-          <div className="tb-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--tx3)', background: 'var(--bg3)', padding: '4px 10px', borderRadius: '15px' }}>
-               ID: #7425s-PRO
-            </span>
+          <div className="tb-title" style={{ fontWeight: '900', color: 'var(--pr)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '10px', background: 'var(--ac)', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>v6.2 PRO</span>
+            {branding.nombre}
+          </div>
+          <div className="tb-right">
             <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
           </div>
         </div>
