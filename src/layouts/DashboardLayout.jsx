@@ -65,7 +65,7 @@ export default function DashboardLayout() {
             <i className="fas fa-tachometer-alt"></i> Panel General
           </NavLink>
           <NavLink to="/dashboard/generador" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-file-pdf"></i> Generador Reportes
+            <i className="fas fa-file-pdf"></i> Generador Informativo
           </NavLink>
           
           <div className="nl">GESTIÓN SEMANAL</div>
@@ -76,15 +76,26 @@ export default function DashboardLayout() {
             <i className="fas fa-file-signature"></i> Control Asistencia
           </NavLink>
           <NavLink to="/dashboard/cronograma" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
-            <i className="fas fa-calendar-check"></i> Cronograma
+            <i className="fas fa-calendar-check"></i> Cronograma Servicios
           </NavLink>
 
-          <div className="nl">LIDERAZGO & DATA</div>
+          <div className="nl">LOGÍSTICA & BODEGA</div>
+          <NavLink to="/dashboard/inventario" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-boxes"></i> Inventario Activos
+          </NavLink>
+          <NavLink to="/dashboard/insumos" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-cubes"></i> Control Insumos
+          </NavLink>
+
+          <div className="nl">SEGURIDAD & DATA</div>
           <NavLink to="/dashboard/hermanos" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-user-tie"></i> Hermanos Líderes
           </NavLink>
           <NavLink to="/dashboard/finanzas" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-wallet"></i> Control Diezmos
+          </NavLink>
+          <NavLink to="/dashboard/usuarios" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-user-shield"></i> Usuarios & Roles
           </NavLink>
           <NavLink to="/dashboard/configuracion" onClick={handleNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-cog"></i> Configuración SaaS

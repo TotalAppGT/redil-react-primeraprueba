@@ -1,97 +1,79 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { supabaseService } from '../services/supabaseService'
+import { useBranding } from '../context/BrandingContext'
 
 export default function Insumos() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const { branding } = useBranding()
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock data basado en los encabezados reales: ID, Articulo, Categoria, Cantidad, Unidad, PrecioUnitarioQ, StockMinimo, Proveedor, Observaciones
-  const [insumos, setInsumos] = useState([
-    { id: '1', Articulo: 'Aceite p. Ungir', Categoria: 'Servicio', Cantidad: 12, Unidad: 'Frascos', PrecioUnitarioQ: 35.00, StockMinimo: 5, Proveedor: 'Librería Cristiana', Observaciones: 'Fragancia Nardo' },
-    { id: '2', Articulo: 'Hojas Bond Carta', Categoria: 'Oficina', Cantidad: 250, Unidad: 'Hojas', PrecioUnitarioQ: 0.15, StockMinimo: 500, Proveedor: 'Papelería El Faro', Observaciones: 'Solo quedan en bodega 1 resma' },
-    { id: '3', Articulo: 'Detergente Líquido', Categoria: 'Limpieza', Cantidad: 45, Unidad: 'Litros', PrecioUnitarioQ: 14.50, StockMinimo: 10, Proveedor: 'Supermercado', Observaciones: 'Uso general' },
-  ])
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      const { data: res } = await supabaseService.getInsumos()
+      if (res) setData(res)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-spray-can"></i> Control de Insumos (Consumibles)</h2>
+        <h2><i className="fas fa-cubes" style={{ color: 'var(--tl)' }}></i> Gestión de Insumos y Consumibles</h2>
         <div className="mod-acts">
-          <button className="btn btn-pr btn-sm"><i className="fas fa-plus"></i> Registrar Gasto</button>
-          <button className="btn btn-ok btn-sm"><i className="fas fa-file-excel"></i> Exportar</button>
+           <button className="btn btn-ok"><i className="fas fa-plus"></i> REGISTRAR INGRESO</button>
+           <button className="btn btn-pr" onClick={loadData}><i className="fas fa-sync"></i> RECARGAR</button>
         </div>
       </div>
 
       <div className="sg">
-        <div className="sc p">
-          <div className="sc-ico"><i className="fas fa-cart-plus"></i></div>
-          <div className="sc-v">Q 1,240</div>
-          <div className="sc-l">Gasto en Consumibles (Mes)</div>
-        </div>
-        <div className="sc r">
-          <div className="sc-ico"><i className="fas fa-exclamation-triangle"></i></div>
-          <div className="sc-v">2</div>
-          <div className="sc-l">Artículos con Bajo Stock</div>
-        </div>
+        <div className="sc t"><div className="sc-ico"><i className="fas fa-exclamation-triangle"></i></div><div className="sc-v">{data.filter(x => x.cantidad <= x.minimo).length}</div><div className="sc-l">ALERTA: STOCK BAJO</div></div>
+        <div className="sc p"><div className="sc-ico"><i className="fas fa-shopping-cart"></i></div><div className="sc-v">Q {data.reduce((s, x) => s + (x.valor_unidad || 0) * x.cantidad, 0).toLocaleString()}</div><div className="sc-l">VALOR EN BODEGA</div></div>
       </div>
 
-      <div className="card" style={{ padding: '0' }}>
-        <div style={{ padding: '15px', display: 'flex', gap: '10px', borderBottom: '1px solid var(--brd)' }}>
-          <div className="sb2" style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'var(--bg3)', padding: '5px 12px', borderRadius: '8px' }}>
-            <i className="fas fa-search" style={{ color: 'var(--tx3)', marginRight: '10px' }}></i>
-            <input 
-              type="text" 
-              placeholder="Buscar insumo..." 
-              className="fc" 
-              style={{ border: 'none', background: 'none' }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select className="fc" style={{ width: '180px' }}>
-            <option>Todas las Categorías</option>
-            <option>Oficina</option>
-            <option>Limpieza</option>
-            <option>Servicio</option>
-          </select>
-        </div>
-
+      <div className="card">
         <div className="table-wrap">
           <table className="pro-table">
             <thead>
               <tr>
-                <th>Insumo</th>
-                <th>Categoría / Proveedor</th>
+                <th>Insumo / Descripción</th>
                 <th>Existencia</th>
-                <th>Stock Min.</th>
-                <th>Precio Unit.</th>
-                <th>Costo Total</th>
-                <th>Acciones</th>
+                <th>Mínimo</th>
+                <th>Categoría</th>
+                <th>Gestión</th>
               </tr>
             </thead>
             <tbody>
-              {insumos.map(i => (
-                <tr key={i.id}>
-                  <td><strong>{i.Articulo}</strong></td>
-                  <td>
-                    <div style={{ fontSize: '13px' }}>{i.Categoria}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx3)' }}>{i.Proveedor}</div>
-                  </td>
-                  <td>
-                    <span className={`stat-pill ${i.Cantidad <= i.StockMinimo ? 'pill-err' : 'pill-ok'}`} style={{ fontWeight: '800' }}>
-                      {i.Cantidad} {i.Unidad}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--tx2)' }}>{i.StockMinimo}</td>
-                  <td>Q {i.PrecioUnitarioQ.toFixed(2)}</td>
-                  <td><strong>Q {(i.Cantidad * i.PrecioUnitarioQ).toFixed(2)}</strong></td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                      <button className="tb-btn" title="Descargar stock" style={{ color: 'var(--err)' }}><i className="fas fa-minus-circle"></i></button>
-                      <button className="tb-btn" title="Añadir stock" style={{ color: 'var(--ok)' }}><i className="fas fa-plus-circle"></i></button>
-                      <button className="tb-btn" title="Editar"><i className="fas fa-edit"></i></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {loading ? (
+                <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-circle-notch fa-spin"></i> Cargando insumos...</td></tr>
+              ) : data.length === 0 ? (
+                <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-box" style={{ fontSize: '30px', color: 'var(--tx3)' }}></i><p>Sin insumos registrados.</p></td></tr>
+              ) : (
+                data.map(x => (
+                  <tr key={x.id}>
+                    <td><b>{x.nombre}</b><div style={{ fontSize: '10px', color: 'var(--tx2)' }}>{x.descripcion}</div></td>
+                    <td>
+                      <div style={{ fontSize: '16px', fontWeight: '900', color: x.cantidad <= x.minimo ? 'var(--err)' : 'var(--ok)' }}>{x.cantidad} {x.unidad || 'Unid.'}</div>
+                      {x.cantidad <= x.minimo && <span style={{ fontSize: '10px', color: 'var(--err)', fontWeight: '800' }}>⚠ REQUIERE COMPRA</span>}
+                    </td>
+                    <td>{x.minimo}</td>
+                    <td>{x.categoria}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button className="btn btn-ok btn-sm" title="Agregar stock"><i className="fas fa-plus"></i></button>
+                        <button className="btn btn-err btn-sm" title="Retirar stock"><i className="fas fa-minus"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

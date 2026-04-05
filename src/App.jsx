@@ -13,6 +13,9 @@ const Hermanos = lazy(() => import('./pages/Hermanos'))
 const Cronograma = lazy(() => import('./pages/Cronograma'))
 const Finanzas = lazy(() => import('./pages/Finanzas'))
 const Generador = lazy(() => import('./pages/Generador'))
+const Inventario = lazy(() => import('./pages/Inventario'))
+const Insumos = lazy(() => import('./pages/Insumos'))
+const Usuarios = lazy(() => import('./pages/Usuarios'))
 
 // Error Boundary Simple
 class ErrorBoundary extends React.Component {
@@ -67,6 +70,9 @@ function App() {
                 <Route path="cronograma" element={<Cronograma />} />
                 <Route path="finanzas" element={<Finanzas />} />
                 <Route path="generador" element={<Generador />} />
+                <Route path="inventario" element={<Inventario />} />
+                <Route path="insumos" element={<Insumos />} />
+                <Route path="usuarios" element={<Usuarios />} />
                 {/* Fallback para el dashboard panel */}
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>

@@ -1,130 +1,97 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { supabaseService } from '../services/supabaseService'
+import { useBranding } from '../context/BrandingContext'
 
 export default function Inventario() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState('activos')
+  const { branding } = useBranding()
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
-  // Mock data basado en los encabezados reales: ID, Articulo, Categoria, Cantidad, Unidad, Estado, Ubicacion, ValorQ, Observaciones
-  const [items, setItems] = useState([
-    { id: '1', Articulo: 'Bocinas JBL 15"', Categoria: 'Sonido', Cantidad: 2, Unidad: 'Unidades', Estado: 'Bueno', Ubicacion: 'Auditorio Ppal.', ValorQ: 4500.00, Observaciones: 'Mantenimiento preventivo en Marzo' },
-    { id: '2', Articulo: 'Sillas Plásticas Azules', Categoria: 'Mobiliario', Cantidad: 150, Unidad: 'Unidades', Estado: 'Regulares', Ubicacion: 'Bodega 1', ValorQ: 120.00, Observaciones: 'Varios necesitan reparación' },
-    { id: '3', Articulo: 'Proyector Epson L500', Categoria: 'Tecnología', Cantidad: 1, Unidad: 'Unidades', Estado: 'Nuevo', Ubicacion: 'Salón Clima', ValorQ: 8900.00, Observaciones: 'Garantía vigente' },
-  ])
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      // Simulación de carga de inventario desde Supabase
+      const { data: res } = await supabaseService.getInventario()
+      if (res) setData(res)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filtered = data.filter(i => 
+    (i.articulo || '').toLowerCase().includes(search.toLowerCase()) || 
+    (i.codigo || '').includes(search)
+  )
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-boxes"></i> Inventario de Activos Fijos</h2>
+        <h2><i className="fas fa-boxes" style={{ color: 'var(--ac)' }}></i> Control de Inventario y Activos</h2>
         <div className="mod-acts">
-          <button className="btn btn-pr btn-sm"><i className="fas fa-plus"></i> Añadir Activo</button>
-          <button className="btn btn-ok btn-sm"><i className="fas fa-file-excel"></i> Exportar</button>
+           <button className="btn btn-ok"><i className="fas fa-plus"></i> REGISTRAR ACTIVO</button>
+           <button className="btn btn-pr" onClick={loadData}><i className="fas fa-sync"></i> RECARGAR</button>
         </div>
       </div>
 
       <div className="sg">
-        <div className="sc">
-          <div className="sc-ico"><i className="fas fa-box"></i></div>
-          <div className="sc-v">245</div>
-          <div className="sc-l">Artículos Totales</div>
-        </div>
-        <div className="sc g">
-          <div className="sc-ico"><i className="fas fa-check-circle"></i></div>
-          <div className="sc-v">Q 58,400</div>
-          <div className="sc-l">Valor del Inventario</div>
-        </div>
-        <div className="sc r">
-          <div className="sc-ico"><i className="fas fa-tools"></i></div>
-          <div className="sc-v">12</div>
-          <div className="sc-l">Artículos en mal estado</div>
-        </div>
+        <div className="sc g"><div className="sc-ico"><i className="fas fa-barcode"></i></div><div className="sc-v">{data.length}</div><div className="sc-l">ARTÍCULOS REGISTRADOS</div></div>
+        <div className="sc p"><div className="sc-ico"><i className="fas fa-dollar-sign"></i></div><div className="sc-v">Q {data.reduce((s, x) => s + (x.valor || 0), 0).toLocaleString()}</div><div className="sc-l">VALOR TOTAL ESTIMADO</div></div>
       </div>
 
-      <div className="card" style={{ padding: '0' }}>
-        <div style={{ display: 'flex', borderBottom: '2px solid var(--brd)' }}>
-          <button 
-            onClick={() => setActiveTab('activos')}
-            style={{ 
-              flex: 1, padding: '12px', border: 'none', background: activeTab === 'activos' ? '#fff' : 'var(--bg3)',
-              fontWeight: '800', color: activeTab === 'activos' ? 'var(--pr)' : 'var(--tx3)',
-              borderBottom: activeTab === 'activos' ? '3px solid var(--pr)' : 'none',
-              cursor: 'pointer'
-            }}
-          >
-            Activos Disponibles
-          </button>
-          <button 
-            onClick={() => setActiveTab('mantenimiento')}
-            style={{ 
-              flex: 1, padding: '12px', border: 'none', background: activeTab === 'mantenimiento' ? '#fff' : 'var(--bg3)',
-              fontWeight: '800', color: activeTab === 'mantenimiento' ? 'var(--err)' : 'var(--tx3)',
-              borderBottom: activeTab === 'mantenimiento' ? '3px solid var(--err)' : 'none',
-              cursor: 'pointer'
-            }}
-          >
-            En Mantenimiento
-          </button>
-        </div>
+      <div className="card">
+        <div className="ct"><i className="fas fa-search"></i> BUSCADOR POR CÓDIGO/NOMBRE</div>
+        <input 
+          className="fc" 
+          placeholder="Escanee código de barras o escriba el nombre..." 
+          value={search} 
+          onChange={e => setSearch(e.target.value)} 
+          style={{ padding: '15px' }}
+        />
+      </div>
 
-        <div style={{ padding: '15px', display: 'flex', gap: '10px' }}>
-          <div className="sb2" style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'var(--bg3)', padding: '5px 12px', borderRadius: '8px' }}>
-            <i className="fas fa-search" style={{ color: 'var(--tx3)', marginRight: '10px' }}></i>
-            <input 
-              type="text" 
-              placeholder="Buscar por artículo o categoría..." 
-              className="fc" 
-              style={{ border: 'none', background: 'none' }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select className="fc" style={{ width: '180px' }}>
-            <option>Todas las Categorías</option>
-            <option>Sonido</option>
-            <option>Mobiliario</option>
-            <option>Tecnología</option>
-          </select>
-        </div>
-
-        <div className="table-wrap">
-          <table className="pro-table">
-            <thead>
-              <tr>
-                <th>Artículo</th>
-                <th>Categoría / Ubicación</th>
-                <th>Cant.</th>
-                <th>Estado</th>
-                <th>Valor Unitario</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(i => (
-                <tr key={i.id}>
-                  <td><strong>{i.Articulo}</strong></td>
-                  <td>
-                    <div style={{ fontSize: '13px' }}>{i.Categoria}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx3)' }}>{i.Ubicacion}</div>
-                  </td>
-                  <td><span className="stat-pill" style={{ background: 'var(--bg3)' }}>{i.Cantidad} {i.Unidad}</span></td>
-                  <td>
-                    <span className={`stat-pill ${i.Estado === 'Bueno' || i.Estado === 'Nuevo' ? 'pill-ok' : 'pill-err'}`}>
-                      {i.Estado}
-                    </span>
-                  </td>
-                  <td><strong>Q {i.ValorQ.toFixed(2)}</strong></td>
-                  <td style={{ fontSize: '11.5px', maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{i.Observaciones}</td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                      <button className="tb-btn" title="Editar"><i className="fas fa-edit"></i></button>
-                      <button className="tb-btn" title="Dar de baja" style={{ color: 'var(--err)' }}><i className="fas fa-trash"></i></button>
-                    </div>
+      <div className="table-wrap">
+        <table className="pro-table">
+          <thead>
+            <tr>
+              <th>Cód.</th>
+              <th>Artículo / Descripción</th>
+              <th>Categoría</th>
+              <th>Ubicación</th>
+              <th>Estado Físico</th>
+              <th style={{ textAlign: 'center' }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-circle-notch fa-spin"></i> Cargando inventario...</td></tr>
+            ) : filtered.length === 0 ? (
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}><i className="fas fa-box-open" style={{ fontSize: '30px', color: 'var(--tx3)' }}></i><p>No hay artículos en el inventario.</p></td></tr>
+            ) : (
+              filtered.map(x => (
+                <tr key={x.id}>
+                  <td>{x.codigo}</td>
+                  <td><b>{x.articulo}</b><div style={{ fontSize: '10px', color: 'var(--tx2)' }}>{x.descripcion}</div></td>
+                  <td><span className="stat-pill" style={{ background: 'rgba(37,99,168,0.1)', color: 'var(--pr)' }}>{x.categoria}</span></td>
+                  <td>{x.ubicacion}</td>
+                  <td><span className={`stat-pill ${x.estado === 'Excelente' ? 'pill-ok' : 'pill-err'}`}>{x.estado}</span></td>
+                  <td style={{ textAlign: 'center' }}>
+                     <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                        <button className="tb-btn"><i className="fas fa-edit"></i></button>
+                        <button className="tb-btn" style={{ color: 'var(--err)' }}><i className="fas fa-trash"></i></button>
+                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   )
