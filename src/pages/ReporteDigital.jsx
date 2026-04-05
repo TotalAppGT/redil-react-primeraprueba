@@ -114,7 +114,7 @@ export default function ReporteDigital() {
       <div className="mod-hdr" style={{ textAlign: 'center', display: 'block' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--pr)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid var(--ac)' }}>
-             {branding.logo ? <img src={branding.logo} style={{ width: '100%', height: '100%', object-fit: 'cover', borderRadius: '50%' }} /> : <i className="fas fa-church" style={{ color: '#fff', fontSize: '24px' }}></i>}
+             {branding.logo ? <img src={branding.logo} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} /> : <i className="fas fa-church" style={{ color: '#fff', fontSize: '24px' }}></i>}
            </div>
         </div>
         <h2 style={{ display: 'block' }}>{branding.nombre}</h2>

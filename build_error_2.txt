@@ -1,0 +1,37 @@
+﻿
+> redil-react@0.0.0 build
+> vite build
+
+[36mvite v8.0.3 [32mbuilding client environment for production...[36m[39m
+[2K
+transforming...Ô£ô 90 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.46 kB Ôöé gzip:   0.29 kB
+dist/assets/index-BYWMz1oM.css   13.66 kB Ôöé gzip:   3.72 kB
+dist/assets/index-C3kgWmr2.js   681.88 kB Ôöé gzip: 198.66 kB
+
+[32mÔ£ô built in 666ms[39m
+node.exe : [33m[plugin 
+builtin:vite-reporter] 
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   [33m[plugin builtin:vite-reporter] :Stri  
+  ng) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+(!) Some chunks are larger than 500 kB after 
+minification. Consider:
+- Using dynamic import() to code-split the 
+application
+- Use 
+build.rolldownOptions.output.codeSplitting to 
+improve chunking: https://rolldown.rs/referenc
+e/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning 
+via build.chunkSizeWarningLimit.[39m
