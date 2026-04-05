@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Outlet, useNavigate, NavLink } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import ChatBubble from '../components/ChatBubble'
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -11,10 +12,17 @@ export default function DashboardLayout() {
     navigate('/')
   }
 
+  // Cierra el sidebar al hacer click en un link en móviles
+  const handleMobileNavClick = () => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false)
+    }
+  }
+
   return (
     <div className="app-shell">
       {/* SIDEBAR PROFESIONAL */}
-      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`} style={{ transform: sidebarOpen ? 'none' : 'translateX(-100%)' }}>
+      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sb-head">
           <div className="sb-brand">
             <div className="sb-logo-wrap">
@@ -30,7 +38,6 @@ export default function DashboardLayout() {
           </button>
         </div>
         
-        {/* Simulación del Pastor logueado */}
         <div className="sb-user">
           <div className="sb-avatar"><i className="fas fa-user-circle"></i></div>
           <div className="sb-uinfo">
@@ -39,27 +46,30 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        {/* NAVEGACIÓN con React Router */}
         <div className="sb-nav">
           <div className="nl">Principal</div>
           
-          <NavLink to="/dashboard" end className={({isActive}) => isActive ? "ni active" : "ni"}>
+          <NavLink to="/dashboard" end onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-chart-pie"></i> Panel Central
           </NavLink>
           
-          <div className="ni"><i className="fas fa-tasks"></i> Seguimientos</div>
-          <div className="ni"><i className="fas fa-folder-open"></i> Asistencia</div>
+          <NavLink to="/dashboard/finanzas" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-wallet"></i> Diezmos y Finanzas
+          </NavLink>
+
+          <NavLink to="/dashboard/asistencia" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
+            <i className="fas fa-folder-open"></i> Asistencia
+          </NavLink>
           
           <div className="nl">Módulos Pro</div>
           
           <div className="ni"><i className="fas fa-file-pdf"></i> Reportes PDF</div>
-          <div className="ni"><i className="fas fa-robot"></i> Asistente de IA</div>
           
           <div className="nl">Sistema</div>
           
           <div className="ni"><i className="fas fa-users-cog"></i> Control de Usuarios</div>
           
-          <NavLink to="/dashboard/configuracion" className={({isActive}) => isActive ? "ni active" : "ni"}>
+          <NavLink to="/dashboard/configuracion" onClick={handleMobileNavClick} className={({isActive}) => isActive ? "ni active" : "ni"}>
             <i className="fas fa-cog"></i> Configuración SaaS
           </NavLink>
         </div>
@@ -70,23 +80,24 @@ export default function DashboardLayout() {
       </div>
 
       {/* ÁREA PRINCIPAL */}
-      <div className="main" style={{ marginLeft: sidebarOpen ? 'var(--sbw)' : '0' }}>
+      <div className="main">
         <div className="topbar">
-          <button className="menu-btn" style={{ display: 'block' }} onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
           <div className="tb-title">Bienvenido a tu nueva red</div>
           <div className="tb-right">
             <button className="tb-btn" title="Notificaciones"><i className="fas fa-bell"></i></button>
-            <button className="tb-btn" title="Soporte y Ayuda IA"><i className="fas fa-question-circle"></i></button>
           </div>
         </div>
 
         <div className="content">
-          {/* El Outlet inyecta Componentes que coincidan con la ruta hija */}
           <Outlet />
         </div>
       </div>
+
+      {/* Burbuja Flotante de IA GLOBAL */}
+      <ChatBubble />
     </div>
   )
 }
