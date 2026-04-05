@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 
 export default function Hermanos() {
   const [searchTerm, setSearchTerm] = useState('')
-  
-  // Mock data basado en los encabezados reales: ID, CodigoL, NombreL, Area, Zona, Sector, Anfitrion, Direccion, Sup SectorL, Sup AreaL, Ayuda Pastor, Pastor Zona
+
+  // Datos profesionales para la transición
   const [hermanos, setHermanos] = useState([
-    { id: '1', CodigoL: 'L-001', NombreL: 'Juan Pérez', Area: 'Área 1', Zona: 'Zona Central', Sector: 'Sector A', Anfitrion: 'Casa Familia Pérez', Direccion: 'Calle 12-34', 'Sup SectorL': 'Carlos Ruiz', 'Sup AreaL': 'Mario Gomez', 'Ayuda Pastor': 'Elena R.', 'Pastor Zona': 'Pr. Juan' },
-    { id: '2', CodigoL: 'L-002', NombreL: 'María González', Area: 'Área 2', Zona: 'Sede Norte', Sector: 'Sector B', Anfitrion: 'Hna. Martha', Direccion: 'Ave. Principal 5-67', 'Sup SectorL': 'Ana Lopez', 'Sup AreaL': 'Mario Gomez', 'Ayuda Pastor': 'Elena R.', 'Pastor Zona': 'Pr. Juan' },
+    { id: '101', nombre: 'Juan Pérez', telefono: '5544-3322', area: 'Central', zona: 'Norte', sector: 'A', distrito: '1', privilegio: 'Pastor' },
+    { id: '102', nombre: 'María González', telefono: '4433-2211', area: 'Sede Sur', zona: 'Oeste', sector: 'B', distrito: '3', privilegio: 'Líder' },
+    { id: '103', nombre: 'Carlos Ruiz', telefono: '3322-1100', area: 'Enmanuel', zona: 'Sur', sector: 'C', distrito: '2', privilegio: 'Supervisor' },
+    { id: '104', nombre: 'Sara Martha', telefono: '2211-0099', area: 'Central', zona: 'Este', sector: 'A', distrito: '4', privilegio: 'Líder' },
   ])
 
   return (
@@ -14,63 +16,56 @@ export default function Hermanos() {
       <div className="mod-hdr">
         <h2><i className="fas fa-user-tie"></i> Hermanos Líderes</h2>
         <div className="mod-acts">
-          <button className="btn btn-pr"><i className="fas fa-file-upload"></i> Carga Masiva</button>
-          <button className="btn btn-ok"><i className="fas fa-plus"></i> Nuevo Líder</button>
+           <button className="btn btn-ok btn-sm"><i className="fas fa-user-plus"></i> Registrar Nuevo Líder</button>
+           <button className="btn btn-pr btn-sm"><i className="fas fa-file-excel"></i> Exportar Líderes</button>
         </div>
       </div>
 
       <div className="card" style={{ padding: '0' }}>
-        <div className="fr" style={{ padding: '15px', borderBottom: '1px solid var(--brd)', display: 'flex', gap: '10px' }}>
-          <div className="sb2" style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'var(--bg3)', padding: '8px 12px', borderRadius: '8px' }}>
-            <i className="fas fa-search" style={{ color: 'var(--tx3)', marginRight: '10px' }}></i>
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, código o sector..." 
-              className="fc" 
-              style={{ border: 'none', background: 'none', padding: '0' }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select className="fc" style={{ width: '180px' }}>
-            <option value="">Filtrar p. Zona</option>
-            <option value="central">Zona Central</option>
-            <option value="norte">Sede Norte</option>
-          </select>
+        <div className="fr" style={{ padding: '15px', display: 'flex', gap: '12px', borderBottom: '1px solid var(--brd)', background: 'var(--bg3)' }}>
+           <div className="sb2" style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#fff', padding: '6px 14px', borderRadius: '10px', border: '1.5px solid var(--brd)' }}>
+              <i className="fas fa-search" style={{ color: 'var(--tx3)', marginRight: '10px' }}></i>
+              <input type="text" placeholder="Buscar líder por nombre, ID o teléfono..." className="fc" style={{ border: 'none', background: 'none' }} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+           </div>
+           <select className="fc" style={{ width: '180px' }}>
+              <option>Todos los Distritos</option>
+              <option>Distrito 1</option>
+              <option>Distrito 2</option>
+              <option>Distrito 3</option>
+           </select>
         </div>
 
         <div className="table-wrap">
           <table className="pro-table">
             <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nombre Líder</th>
-                <th>Zona / Pastor</th>
-                <th>Sector</th>
-                <th>Anfitrión / Dirección</th>
-                <th>Acciones</th>
+              <tr style={{ background: 'var(--pr)', color: '#fff' }}>
+                <th style={{ color: '#fff' }}>Código ID</th>
+                <th style={{ color: '#fff' }}>Nombre del Líder</th>
+                <th style={{ color: '#fff' }}>Teléfono / Contacto</th>
+                <th style={{ color: '#fff' }}>Área / Zona</th>
+                <th style={{ color: '#fff' }}>Sector / Distrito</th>
+                <th style={{ color: '#fff' }}>Privilegio</th>
+                <th style={{ color: '#fff' }}>Acción</th>
               </tr>
             </thead>
             <tbody>
               {hermanos.map(h => (
                 <tr key={h.id}>
-                  <td><span className="stat-pill" style={{ background: 'var(--bg3)', color: 'var(--pr)', fontWeight: '800' }}>{h.CodigoL}</span></td>
-                  <td><strong>{h.NombreL}</strong></td>
+                  <td><span className="stat-pill" style={{ background: 'var(--bg3)', color: 'var(--pr)', fontSize: '11px' }}>ID #{h.id}</span></td>
+                  <td><strong>{h.nombre}</strong></td>
+                  <td><i className="fas fa-phone-alt" style={{ color: 'var(--tx3)', fontSize: '11px', marginRight: '6px' }}></i> {h.telefono}</td>
                   <td>
-                    <div style={{ fontSize: '13px' }}>{h.Zona}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx3)' }}>{h['Pastor Zona']}</div>
-                  </td>
-                  <td>{h.Sector}</td>
-                  <td>
-                    <div style={{ fontSize: '13px' }}>{h.Anfitrion}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--tx3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>{h.Direccion}</div>
+                    <div style={{ fontWeight: '800', color: 'var(--pr)' }}>{h.area}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--tx2)' }}>Zona: {h.zona}</div>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                      <button className="tb-btn" title="Editar"><i className="fas fa-edit"></i></button>
-                      <button className="tb-btn" title="Eliminar" style={{ color: 'var(--err)' }}><i className="fas fa-trash"></i></button>
-                    </div>
+                    <div style={{ fontWeight: '800' }}>Sector: {h.sector}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--tx2)' }}>Distrito: {h.distrito}</div>
                   </td>
+                  <td>
+                    <span className={`stat-pill ${h.privilegio === 'Pastor' ? 'pill-ok' : 'pill-inf'}`} style={{ background: h.privilegio === 'Pastor' ? 'rgba(39,174,96,.1)' : 'rgba(41,128,185,.1)', color: h.privilegio === 'Pastor' ? 'var(--ok)' : 'var(--inf)' }}>{h.privilegio}</span>
+                  </td>
+                  <td><button className="tb-btn"><i className="fas fa-edit"></i></button></td>
                 </tr>
               ))}
             </tbody>
