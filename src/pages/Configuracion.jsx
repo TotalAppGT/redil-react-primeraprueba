@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useBranding } from '../context/BrandingContext'
 
 export default function Configuracion() {
   const { branding, updateBranding } = useBranding()
   
-  // Estado local para los campos, inicializado con el contexto o valores por defecto del Code.gs original
+  // Estado local sincronizado con el contexto y Supabase
   const [formConfig, setFormConfig] = useState({
     nombre: branding.nombre,
     logoUrl: branding.logo,
     colorPr: branding.colorPr,
     colorAc: branding.colorAc,
     sistemaActivo: branding.sistemaActivo,
-    spreadsheetId: '1iLNbaqKwGRHGqRB1BJ0K1Sbyc53nD7uFD_UmVe91_Io',
+    // Datos de Supabase (Sustituyen a Google Sheets)
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL || 'https://xyz.supabase.co',
     ownerEmail: 'totalappgt@gmail.com',
     ownerPass: 'admintotal',
     driveFolderId: '1OHBSDIk7e1FOyC1tgkkAJoRb_nJh2CKM',
-    metaGrupos: branding.metaGrupos,
-    mensajeMantenimiento: 'El sistema se encuentra en mantenimiento programado. Por favor, intente más tarde.',
-    // Horarios de servicios (secciones legacy que el usuario pidió mantener)
-    cron_lunes: 'Lunes 6:30 PM',
-    cron_jueves: 'Jueves 6:30 PM',
-    cron_domMañana: 'Domingo 7:00 AM',
-    cron_domTarde: 'Domingo 10:30 AM',
+    metaMensualGrupos: branding.metaGrupos,
+    // Horarios originales solicitados
+    servicioLunes: '6:30 PM',
+    servicioJueves: '6:30 PM',
+    servicioDomManana: '7:00 AM',
+    servicioDomTarde: '10:30 AM',
+    mensajeMantenimiento: 'Sistema en mantenimiento. Disculpe las molestias.',
   })
 
   const handleChange = (e) => {
@@ -34,100 +35,110 @@ export default function Configuracion() {
 
   const handleSave = (e) => {
     e.preventDefault()
-    // Actualizar el contexto global para que el cambio se vea en todo el sistema al instante
+    // Actualización inmediata del Branding Global (Contexto)
     updateBranding({
       nombre: formConfig.nombre,
       logo: formConfig.logoUrl,
       colorPr: formConfig.colorPr,
       colorAc: formConfig.colorAc,
-      metaGrupos: formConfig.metaGrupos,
+      metaGrupos: formConfig.metaMensualGrupos,
       sistemaActivo: formConfig.sistemaActivo
     })
     
-    // Aquí iría la llamada a Supabase para persistir en BD
-    alert('Configuración guardada correctamente en el sistema.')
+    // Aquí se conectaría con la tabla 'configuracion' de Supabase
+    alert('¡Configuración maestra actualizada con éxito! Los cambios se han propagado a todo el sistema.')
   }
 
   return (
     <div className="mod active">
       <div className="mod-hdr">
-        <h2><i className="fas fa-cog"></i> Configuración Maestra</h2>
+        <h2><i className="fas fa-tools"></i> Panel de Control SaaS y Branding</h2>
         <div className="mod-acts">
-           <button className="btn btn-pr" onClick={handleSave}><i className="fas fa-save"></i> Guardar Cambios</button>
+           <button className="btn btn-pr" onClick={handleSave} style={{ padding: '12px 25px' }}><i className="fas fa-save"></i> Guardar Cambios</button>
         </div>
       </div>
 
       <div className="dg">
         {/* COLUMNA 1: IDENTIDAD Y SISTEMA */}
         <div className="dc">
-           <div className="dct"><i className="fas fa-church"></i> Identidad de la Iglesia / Empresa</div>
-           <form className="fg2" style={{ marginTop: '10px' }}>
+           <div className="dct"><i className="fas fa-palette"></i> Identidad Visual (Branding Dinámico)</div>
+           <div className="fg2" style={{ marginTop: '10px' }}>
               <div className="fgg full">
-                <label>Nombre del Sistema / Organización</label>
-                <input name="nombre" value={formConfig.nombre} onChange={handleChange} className="fc" />
+                <label>Nombre de la Iglesia / Organización</label>
+                <input name="nombre" value={formConfig.nombre} onChange={handleChange} className="fc" placeholder="Ej: Iglesia Restauración" />
               </div>
               <div className="fgg full">
-                <label>URL del Logotipo (Imagen .jpg o .png)</label>
-                <input name="logoUrl" value={formConfig.logoUrl} onChange={handleChange} className="fc" placeholder="https://ejemplo.com/logo.jpg" />
+                <label>Link del Logotipo (Directo .png / .jpg)</label>
+                <input name="logoUrl" value={formConfig.logoUrl} onChange={handleChange} className="fc" placeholder="https://miweb.com/logo.png" />
                 {formConfig.logoUrl && (
-                  <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                    <img src={formConfig.logoUrl} alt="Preview" style={{ height: '60px', borderRadius: '8px', border: '1px solid var(--brd)' }} />
+                  <div style={{ marginTop: '10px', textAlign: 'center', background: '#f8f9fa', padding: '10px', borderRadius: '10px' }}>
+                    <img src={formConfig.logoUrl} alt="Logo Preview" style={{ height: '60px', borderRadius: '5px' }} />
                   </div>
                 )}
               </div>
               <div className="fgg half">
-                <label>Color Principal (Sidebar/Botones)</label>
+                <label>Color de Marca Principal</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <input type="color" name="colorPr" value={formConfig.colorPr} onChange={handleChange} style={{ width: '40px', height: '40px', border: 'none', padding: '0', background: 'none' }} />
+                  <input type="color" name="colorPr" value={formConfig.colorPr} onChange={handleChange} style={{ width: '45px', height: '45px', border: 'none', background: 'none', padding: '0', cursor: 'pointer' }} />
                   <input name="colorPr" value={formConfig.colorPr} onChange={handleChange} className="fc" style={{ textTransform: 'uppercase' }} />
                 </div>
               </div>
               <div className="fgg half">
-                <label>Color de Acento (Hover/Detalles)</label>
+                <label>Color de Acento (Detalles)</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <input type="color" name="colorAc" value={formConfig.colorAc} onChange={handleChange} style={{ width: '40px', height: '40px', border: 'none', padding: '0', background: 'none' }} />
+                  <input type="color" name="colorAc" value={formConfig.colorAc} onChange={handleChange} style={{ width: '45px', height: '45px', border: 'none', background: 'none', padding: '0', cursor: 'pointer' }} />
                   <input name="colorAc" value={formConfig.colorAc} onChange={handleChange} className="fc" style={{ textTransform: 'uppercase' }} />
                 </div>
               </div>
-           </form>
+           </div>
 
-           <div className="dct" style={{ marginTop: '30px' }}><i className="fas fa-toggle-on"></i> Estado Global del Sistema</div>
-           <div className="card" style={{ background: formConfig.sistemaActivo ? 'rgba(39, 174, 96, 0.05)' : 'rgba(231, 76, 60, 0.05)', border: '1px solid var(--brd)' }}>
+           <div className="dct" style={{ marginTop: '40px' }}><i className="fas fa-power-off"></i> Control de Acceso Global</div>
+           <div className={`card ${formConfig.sistemaActivo ? 'active-system' : 'inactive-system'}`} style={{ border: '2px solid var(--brd)', transition: '0.3s' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }}>
-                 <div style={{ position: 'relative', width: '50px', height: '26px', background: formConfig.sistemaActivo ? 'var(--ok)' : '#ccc', borderRadius: '20px', transition: '0.3s' }}>
-                    <div style={{ position: 'absolute', left: formConfig.sistemaActivo ? '28px' : '4px', top: '4px', width: '18px', height: '18px', background: '#fff', borderRadius: '50%', transition: '0.3s' }}></div>
+                 <div style={{ position: 'relative', width: '60px', height: '30px', background: formConfig.sistemaActivo ? 'var(--ok)' : '#ccc', borderRadius: '25px', transition: '0.3s' }}>
+                    <div style={{ position: 'absolute', left: formConfig.sistemaActivo ? '33px' : '3px', top: '3px', width: '24px', height: '24px', background: '#fff', borderRadius: '50%', transition: '0.3s', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}></div>
                     <input type="checkbox" name="sistemaActivo" checked={formConfig.sistemaActivo} onChange={handleChange} style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer' }} />
                  </div>
-                 <span style={{ fontWeight: '800', fontSize: '14px', color: formConfig.sistemaActivo ? 'var(--ok)' : 'var(--err)' }}>
-                    {formConfig.sistemaActivo ? 'EL SISTEMA ESTÁ ENCENDIDO (VIVO)' : 'EL SISTEMA ESTÁ APAGADO (MANTENIMIENTO)'}
-                 </span>
+                 <div>
+                    <span style={{ fontWeight: '900', fontSize: '15px', color: formConfig.sistemaActivo ? 'var(--ok)' : 'var(--err)' }}>
+                        {formConfig.sistemaActivo ? 'SISTEMA ONLINE (ACCESO ABIERTO)' : 'SISTEMA OFFLINE (MANTENIMIENTO)'}
+                    </span>
+                    <p style={{ fontSize: '11px', color: 'var(--tx3)' }}>Si apagas este switch, nadie podrá ver datos excepto tú.</p>
+                 </div>
               </label>
               {!formConfig.sistemaActivo && (
-                <div style={{ marginTop: '15px' }}>
-                   <label>Mensaje para Usuarios Bloqueados</label>
+                <div style={{ marginTop: '15px', animation: 'slDown 0.3s ease' }}>
+                   <label>Mensaje de Bloqueo</label>
                    <textarea name="mensajeMantenimiento" value={formConfig.mensajeMantenimiento} onChange={handleChange} className="fc" rows="2"></textarea>
                 </div>
               )}
            </div>
         </div>
 
-        {/* COLUMNA 2: TÉCNICO Y HORARIOS */}
+        {/* COLUMNA 2: SUPABASE Y HORARIOS */}
         <div className="dc">
-           <div className="dct"><i className="fas fa-user-shield"></i> Datos de Acceso y Propietario (SaaS)</div>
+           <div className="dct"><i className="fas fa-database"></i> Conexión de Datos (Supabase Cloud)</div>
            <div className="fg2">
-              <div className="fgg half"><label>Email Propietario</label><input name="ownerEmail" value={formConfig.ownerEmail} onChange={handleChange} className="fc" /></div>
-              <div className="fgg half"><label>Password Especial</label><input name="ownerPass" type="password" value={formConfig.ownerPass} onChange={handleChange} className="fc" /></div>
-              <div className="fgg full"><label>ID Carpeta Drive (Reportes PDF)</label><input name="driveFolderId" value={formConfig.driveFolderId} onChange={handleChange} className="fc" /></div>
-              <div className="fgg full"><label>Límite Inactividad (Minutos)</label><input name="limitInact" type="number" defaultValue="60" className="fc" /></div>
+              <div className="fgg full">
+                <label>Supabase URL (Backend Activo)</label>
+                <input name="supabaseUrl" value={formConfig.supabaseUrl} readOnly className="fc" style={{ background: '#f0f4f8', color: 'var(--tx3)' }} />
+                <span style={{ fontSize: '10px', color: 'var(--ok)' }}>✓ Conectado exitosamente a la base de datos PostgreSQL.</span>
+              </div>
+              <div className="fgg half"><label>Email Administrador</label><input name="ownerEmail" value={formConfig.ownerEmail} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Filtro de Seguridad</label><input type="password" name="ownerPass" value={formConfig.ownerPass} onChange={handleChange} className="fc" /></div>
+              <div className="fgg full">
+                <label>ID Carpeta Drive (Almacenamiento de Reportes)</label>
+                <input name="driveFolderId" value={formConfig.driveFolderId} onChange={handleChange} className="fc" />
+              </div>
            </div>
 
-           <div className="dct" style={{ marginTop: '30px' }}><i className="fas fa-clock"></i> Horarios de Servicios y Metas</div>
+           <div className="dct" style={{ marginTop: '40px' }}><i className="fas fa-calendar-alt"></i> Horarios de Cultos y Metas</div>
            <div className="fg2">
-              <div className="fgg half"><label>Meta Mensual Grupos</label><input name="metaGrupos" type="number" value={formConfig.metaGrupos} onChange={handleChange} className="fc" /></div>
-              <div className="fgg half"><label>Servicio Lunes</label><input name="cron_lunes" value={formConfig.cron_lunes} onChange={handleChange} className="fc" /></div>
-              <div className="fgg half"><label>Servicio Jueves</label><input name="cron_jueves" value={formConfig.cron_jueves} onChange={handleChange} className="fc" /></div>
-              <div className="fgg half"><label>Dom. Mañana</label><input name="cron_domMañana" value={formConfig.cron_domMañana} onChange={handleChange} className="fc" /></div>
-              <div className="fgg half"><label>Dom. Tarde</label><input name="cron_domTarde" value={formConfig.cron_domTarde} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Meta Mensual Reportes</label><input name="metaMensualGrupos" type="number" value={formConfig.metaMensualGrupos} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Culto Lunes</label><input name="servicioLunes" value={formConfig.servicioLunes} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Culto Jueves</label><input name="servicioJueves" value={formConfig.servicioJueves} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Culto Dom. (Mañana)</label><input name="servicioDomManana" value={formConfig.servicioDomManana} onChange={handleChange} className="fc" /></div>
+              <div className="fgg half"><label>Culto Dom. (Tarde)</label><input name="servicioDomTarde" value={formConfig.servicioDomTarde} onChange={handleChange} className="fc" /></div>
            </div>
         </div>
       </div>

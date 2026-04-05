@@ -27,10 +27,10 @@ export default function DashboardLayout() {
         <div className="sb-head">
           <div className="sb-brand">
             <div className="sb-logo-wrap">
-              {branding.logo ? <img src={branding.logo} alt="Logo" /> : <i className="fas fa-church"></i>}
+              {branding.logo ? <img src={branding.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <i className="fas fa-church"></i>}
             </div>
             <div>
-              <div className="sb-title">{branding.nombre}</div>
+              <div className="sb-title" style={{ fontSize: branding.nombre.length > 20 ? '11px' : '13px' }}>{branding.nombre}</div>
               <div className="sb-sub">{branding.sistemaActivo ? 'Sistema Activo' : 'Mantenimiento'}</div>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function DashboardLayout() {
           <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <div className="tb-title">{branding.nombre}</div>
+          <div className="tb-title" style={{ color: branding.colorPr }}>{branding.nombre}</div>
           <div className="tb-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '11px', color: 'var(--tx3)', background: 'var(--bg3)', padding: '4px 10px', borderRadius: '15px' }}>
                ID: #7425s-PRO
